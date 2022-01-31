@@ -1,0 +1,42 @@
+---
+# defaults file for roles/vsphere-lab-resources
+vcenter_hostname: vcenter.local
+
+vcenter_credentials:
+  username: administrator@vsphere.local
+  password: VMware1!
+    
+validate_certs: false
+
+vlan_ranges: "{{ vlans | map(attribute='vlan_id') | list | join(',') }}"
+
+dvs_portgroup_name: "dpgVsphereLab{{ lab_padded_id }}"
+dvs_name: dvsLab
+datacenter_name: LAB
+cluster_name: LAB
+dpg_privision_name: dpgProvision
+dpg_external_name: dpgExternal
+
+root_folder_name: VSPHERE-LAB
+lab_folder_name: "LAB{{ lab_padded_id }}"
+lab_full_path: "/{{ datacenter_name}}/vm/{{ root_folder_name }}/{{ lab_folder_name }}"
+
+drs_affinity_rule: "vsphere-lab{{ lab_padded_id }}-affinity-rule"
+
+resource_pool: 
+  name: "RP-VSPHERELAB{{ lab_padded_id }}"
+  memory:
+    reservation: 0
+    limit: 81920
+    shares: normal
+    expandable: true
+  cpu:
+    reservation: 0
+    limit: 20480
+    shares: normal
+    expandable: true
+
+templates:
+  infra_linux: Template-ol8rhk-lab
+  vyos_vm: Template-vyos-13
+  nested_esxi: Template-nestedesxi-7

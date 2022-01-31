@@ -1,0 +1,95 @@
+---
+# common vars
+lab_domain: vsphere.lab
+
+lab_id: "{{ present_lab_id|default(1) }}"
+lab_padded_id: "{{ '%02d'|format(lab_id|int) }}"
+
+esxi_mac_seed: "00:50:56:3F:{{ lab_padded_id }}:"
+
+management_network_gateway: 172.16.100.1
+
+vlans:
+  - vlan_id: 2001
+    gateway_ip: 172.16.201.1
+    mask: 24
+    description: vMotion Network
+  - vlan_id: 2002
+    gateway_ip: 172.16.202.1
+    mask: 24
+    description: NFS Storage Network
+  - vlan_id: 2003
+    gateway_ip: 172.16.203.1
+    mask: 24
+    description: vSAN Network
+
+vyos_server:
+  name: "vsphere-lab{{ lab_padded_id }}-vyos"
+  num_cpus: 2
+  memory_gb: 1
+  provision_mac_address: "{{ esxi_mac_seed }}B1"
+  external_mac_address: "{{ esxi_mac_seed }}B2"
+  internal_mac_address: "{{ esxi_mac_seed }}B3"
+
+infra_servers:
+  - name: "vsphere-lab{{ lab_padded_id }}-dnsmasq"
+    ip: 172.16.100.11
+    netmask: 255.255.255.0
+    num_cpus: 1
+    memory_gb: 1 
+  - name: "vsphere-lab{{ lab_padded_id }}-remotedesktop"
+    ip: 172.16.100.12
+    netmask: 255.255.255.0
+    num_cpus: 2
+    memory_gb: 4 
+  - name: "vsphere-lab{{ lab_padded_id }}-nfsserver"
+    ip: 172.16.100.13
+    netmask: 255.255.255.0
+    num_cpus: 2
+    memory_gb: 2 
+
+esxi_servers:
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi01"
+    ip: 172.16.100.101
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}01"
+      - "{{ esxi_mac_seed }}A1"
+    num_cpus: 4
+    memory_gb: 16 
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi02"
+    ip: 172.16.100.102
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}02"
+      - "{{ esxi_mac_seed }}A2"
+    num_cpus: 4
+    memory_gb: 16 
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi03"
+    ip: 172.16.100.103
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}03"
+      - "{{ esxi_mac_seed }}A3"
+    num_cpus: 4
+    memory_gb: 16 
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi04"
+    ip: 172.16.100.104
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}04"
+      - "{{ esxi_mac_seed }}A4"
+    num_cpus: 4
+    memory_gb: 16 
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi05"
+    ip: 172.16.100.105
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}05"
+      - "{{ esxi_mac_seed }}A5"
+    num_cpus: 4
+    memory_gb: 16 
+
+dns_servers:
+  - 10.0.3.194
+  - 10.0.3.148

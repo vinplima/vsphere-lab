@@ -1,0 +1,69 @@
+---
+#
+# Creates basic infrastructure in vCenter
+#
+# Description:
+#  - Creates Virtual Distributed Port Group for the laboratory 
+#  - Creates Resource Pool
+#  - Creates VM directories
+#  - Creates VMs from templates
+
+- name: Create basic infrastructure in vCenter
+  hosts: vcenter
+  connection: local
+  gather_facts: true
+
+  collections:
+    - community.vmware
+
+  pre_tasks:
+    - include_vars:
+        dir: credentials
+        ignore_files: 
+          - README.md
+
+  roles:
+    - roles/vsphere-lab-resources
+
+
+#
+# Configures inventory with vyos IP
+#
+- name: Configure vyos group in in-memory inventory
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  tasks: 
+    - name: Add vyos provision IP to inventory group
+      add_host:
+        name: "{{ vyos_provision_ip }}"
+        groups: vyos  
+
+#
+# Configures vyos router
+#
+# Description:
+#  - Configures vyos interfaces
+#  - Configures vyos NAT rules
+
+- name: Configure vyos router
+  hosts: vyos
+  gather_facts: false
+
+  roles:
+    - roles/vsphere-lab-vyos
+
+#
+# Configures infra servers
+#
+
+
+#
+# Kickstarts ESXi servers
+#
+
+
+#
+# Installs vCenter Server
+#

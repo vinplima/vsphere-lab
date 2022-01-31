@@ -1,0 +1,34 @@
+localhost ansible_python_interpreter=/home/vinic/.local/share/virtualenvs/vsphere-lab-ZwpNLNrD/bin/python
+dnsmasq01 ansible_host=10.0.67.101 ansible_port=22001
+remotedesktop01 ansible_host=10.0.67.101 ansible_port=22002
+nfs01 ansible_host=10.0.67.101 ansible_port=22003
+#vyos01 ansible_host=127.0.0.1 ansible_port=11122
+
+[vcenter]
+localhost
+
+[vcenter:vars]
+dvs_name=vdsMain
+datacenter_name=TST
+vcenter_hostname=vcentertst.rede.tst
+cluster_name=CLS_MAIN
+datastore_name=DSC_DORADO8K_LAB
+dpg_provision_name=seg-vlan-homologacao
+dpg_external_name=seg-vlan-rede-lab
+
+[vyos]
+# dynamically configured
+
+[vyos:vars]
+ansible_connection=network_cli
+ansible_network_os=vyos
+ansible_ssh_user=vyos
+ansible_ssh_pass=laboratory
+
+[all:vars]
+#ansible_user=vagrant
+present_lab_id=1
+external_ip=10.0.67.101
+external_cidr=23
+external_gateway=10.0.66.1
+route_networks=10.0.0.0/16,192.168.0.0/16

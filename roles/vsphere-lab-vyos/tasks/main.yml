@@ -1,0 +1,86 @@
+---
+# tasks file for roles/vsphere-lab-vyos
+
+- name: Wait for vyos to become reachable
+  wait_for_connection:
+
+- name: Set the hostname correctly
+  vyos.vyos.vyos_config:
+    lines:
+      - set system host-name {{vyos_fqdn}}
+
+- name: Configure router interfaces
+  vyos.vyos.vyos_interfaces:
+    config:
+      - name: "eth{{ idx }}"
+        description: "{{ item.description }}"
+        enabled: "{{ item.enabled }}"
+        mtu: "{{ item.mtu }}"
+    state: merged
+  loop: "{{ vyos_interfaces }}"
+  loop_control: 
+    index_var: idx
+
+- name: Configure interfaces ip address
+  vyos.vyos.vyos_l3_interfaces:
+    config:
+    - name: "eth{{ idx }}"
+      ipv4: "{{ item.ipv4 }}"
+    state: merged
+  loop: "{{ vyos_interfaces }}"
+  loop_control: 
+    index_var: idx
+
+- name: Configure VLANs
+  vyos.vyos.vyos_vlan:
+    vlan_id: "{{ item.vlan_id }}"
+    name: "\"{{ item.description }}\""
+    interfaces: "{{ vyos_vlan_interface }}"
+    state: present
+  with_items: "{{ vlans }}"
+
+- name: configure VLANs IP address
+  vyos.vyos.vyos_config:
+    lines:
+      - "set interfaces ethernet {{ vyos_vlan_interface }} vif {{ item.vlan_id }} address {{ item.gateway_ip }}/{{ item.mask }}"
+  with_items: "{{ vlans }}"
+
+- name: configure external static routes
+  vyos.vyos.vyos_static_routes:
+    config:
+    - address_families:
+      - afi: ipv4
+        routes:
+        - dest: "{{ item }}"
+          next_hops:
+          - forward_router_address: "{{ external_gateway }}"
+    state: merged
+  with_items: "{{ vyos_external_networks }}"
+
+- name: configure nat destination rules
+  vyos.vyos.vyos_config:
+    lines:
+      - "set nat destination rule {{idx + 1}} description \"{{item.description}}\""
+      - "set nat destination rule {{idx + 1}} protocol {{item.protocol}}"
+      - "set nat destination rule {{idx + 1}} inbound-interface {{item.inbound_interface}}"
+      - "set nat destination rule {{idx + 1}} destination port {{item.destination.port}}"
+      - "set nat destination rule {{idx + 1}} translation address {{item.translation.address}}"
+      - "set nat destination rule {{idx + 1}} translation port {{item.translation.port}}"
+  loop: "{{ vyos_nat_rules.destination}} "
+  loop_control: 
+    index_var: idx 
+
+- name: configure nat source rules
+  vyos.vyos.vyos_config:
+    lines:
+      - "set nat source rule {{idx + 1}} description \"{{item.description}}\""
+      - "set nat source rule {{idx + 1}} outbound-interface {{item.outbound_interface}}"
+      - "set nat source rule {{idx + 1}} source address {{item.source.address}}"
+      - "set nat source rule {{idx + 1}} translation address {{item.translation.address}}"
+  loop: "{{ vyos_nat_rules.source }}"
+  loop_control: 
+    index_var: idx 
+
+- name: save configurations
+  vyos.vyos.vyos_config:
+    save: "{{ vyos_save_configuration }}"
