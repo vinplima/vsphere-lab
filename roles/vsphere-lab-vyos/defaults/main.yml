@@ -23,3 +23,77 @@ vyos_interfaces:
 vyos_vlan_interface: eth2
 
 vyos_external_networks: "{{ route_networks.split(',') }}"
+
+vyos_nat_rules:
+  destination:
+    - description: "Port Forward: SSH to Infra Server 1 {{ infra_servers.0.ip }}"
+      destination: 
+        port: 11022
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ infra_servers.0.ip }}"
+        port: 22
+    - description: "Port Forward: SSH to Infra Server 2 {{ infra_servers.1.ip }}"
+      destination: 
+        port: 12022
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ infra_servers.1.ip }}"
+        port: 22
+    - description: "Port Forward: esxi server 1 HTTPS {{ esxi_servers.0.ip }}"
+      destination: 
+        port: 11443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.0.ip }}"
+        port: 443
+    - description: "Port Forward: esxi server 2 HTTPS {{ esxi_servers.1.ip }}"
+      destination: 
+        port: 12443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.1.ip }}"
+        port: 443
+    - description: "Port Forward: esxi server 3 HTTPS {{ esxi_servers.2.ip }}"
+      destination: 
+        port: 13443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.2.ip }}"
+        port: 443
+    - description: "Port Forward: esxi server 4 HTTPS {{ esxi_servers.3.ip }}"
+      destination: 
+        port: 14443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.3.ip }}"
+        port: 443
+    - description: "Port Forward: esxi server 5 HTTPS {{ esxi_servers.4.ip }}"
+      destination: 
+        port: 15443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.4.ip }}"
+        port: 443
+    - description: "Port Forward: vcenter server HTTPS {{ vcenter_server.ip }}"
+      destination: 
+        port: 443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ vcenter_server.ip }}"
+        port: 443
+  source:
+    - description: "Masquerade internal Network"
+      source:
+        address: 172.16.0.0/16
+      translation:
+        address: masquerade
+      outbound_interface: eth1

@@ -1,0 +1,16 @@
+---
+- name: Set export dictionary for {{ item }}
+  set_fact:
+    export_data:
+      export: 
+      access: 
+        - hostname: "{{ nfs_exports.client_network }}"
+          options:
+            - 'rw'
+            - 'no_root_squash'
+      mode: "u=rwx,g=rx,o=rx"
+      path: "{{ item }}" 
+
+- name: Updates nfs_server_exports fact
+  set_fact:
+    nfs_server_exports: "{{ nfs_server_exports + [export_data] }}"

@@ -30,26 +30,39 @@ vyos_server:
   provision_mac_address: "{{ esxi_mac_seed }}B1"
   external_mac_address: "{{ esxi_mac_seed }}B2"
   internal_mac_address: "{{ esxi_mac_seed }}B3"
+  initial_powerstate: powered-on
+
+vcenter_server:
+  name: "vapp-vcenter7"
+  hostname: vcenter-lab{{ lab_padded_id }}
+  ip: 172.16.100.30
+  netmask: 255.255.255.0
 
 infra_servers:
   - name: "vsphere-lab{{ lab_padded_id }}-dnsmasq"
+    hostname: dnsmasq01
     ip: 172.16.100.11
     netmask: 255.255.255.0
-    num_cpus: 1
+    num_cpus: 2
     memory_gb: 1 
-  - name: "vsphere-lab{{ lab_padded_id }}-remotedesktop"
+    disk: []
+    initial_powerstate: powered-on
+  - name: "vsphere-lab{{ lab_padded_id }}-nfsserver"
+    hostname: nfsserver01
     ip: 172.16.100.12
     netmask: 255.255.255.0
     num_cpus: 2
-    memory_gb: 4 
-  - name: "vsphere-lab{{ lab_padded_id }}-nfsserver"
-    ip: 172.16.100.13
-    netmask: 255.255.255.0
-    num_cpus: 2
     memory_gb: 2 
+    disk:
+      - size_gb: 20
+        type: thin
+      - size_gb: 500
+        type: thin
+    initial_powerstate: powered-on
 
 esxi_servers:
   - name: "vsphere-lab{{ lab_padded_id }}-esxi01"
+    hostname: esxi01
     ip: 172.16.100.101
     netmask: 255.255.255.0
     mac_addresses: 
@@ -57,7 +70,9 @@ esxi_servers:
       - "{{ esxi_mac_seed }}A1"
     num_cpus: 4
     memory_gb: 16 
+    initial_powerstate: powered-off
   - name: "vsphere-lab{{ lab_padded_id }}-esxi02"
+    hostname: esxi02
     ip: 172.16.100.102
     netmask: 255.255.255.0
     mac_addresses: 
@@ -65,7 +80,9 @@ esxi_servers:
       - "{{ esxi_mac_seed }}A2"
     num_cpus: 4
     memory_gb: 16 
+    initial_powerstate: powered-off
   - name: "vsphere-lab{{ lab_padded_id }}-esxi03"
+    hostname: esxi03
     ip: 172.16.100.103
     netmask: 255.255.255.0
     mac_addresses: 
@@ -73,7 +90,9 @@ esxi_servers:
       - "{{ esxi_mac_seed }}A3"
     num_cpus: 4
     memory_gb: 16 
+    initial_powerstate: powered-off
   - name: "vsphere-lab{{ lab_padded_id }}-esxi04"
+    hostname: esxi04
     ip: 172.16.100.104
     netmask: 255.255.255.0
     mac_addresses: 
@@ -81,7 +100,9 @@ esxi_servers:
       - "{{ esxi_mac_seed }}A4"
     num_cpus: 4
     memory_gb: 16 
+    initial_powerstate: powered-off
   - name: "vsphere-lab{{ lab_padded_id }}-esxi05"
+    hostname: esxi05
     ip: 172.16.100.105
     netmask: 255.255.255.0
     mac_addresses: 
@@ -89,7 +110,21 @@ esxi_servers:
       - "{{ esxi_mac_seed }}A5"
     num_cpus: 4
     memory_gb: 16 
+    initial_powerstate: powered-off
 
 dns_servers:
   - 10.0.3.194
   - 10.0.3.148
+
+ntp_servers:
+  - 10.0.11.163
+  - 10.0.11.164
+  
+nfs_exports:
+  paths:
+    - /srv/nfs/datastore01
+    - /srv/nfs/datastore02
+    - /srv/nfs/datastore03
+    - /srv/nfs/datastore04
+  export_size_gb: 100
+  client_network: 172.16.202.0/24

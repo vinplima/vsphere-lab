@@ -1,0 +1,20 @@
+---
+# defaults file for roles/vsphere-lab-dnsmasq
+packages: 
+  - dnsmasq
+  - nfs-utils
+
+dns_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+
+dhcp_range: 
+  start: 172.16.100.101
+  end: 172.16.100.105
+
+dnsmasq_tftp_root_path: /srv/tftpboot
+dnsmasq_tftp_path: "{{dnsmasq_tftp_root_path}}/esxi7"
+dnsmasq_nfs_root_path: /srv/nfs
+dnsmasq_nfs_path: "{{dnsmasq_nfs_root_path}}/esxi7"
+
+dnsmasq_syslinux_url: "https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux/3.xx/syslinux-3.86.zip"

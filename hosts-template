@@ -1,8 +1,33 @@
 localhost ansible_python_interpreter=/home/vinic/.local/share/virtualenvs/vsphere-lab-ZwpNLNrD/bin/python
 dnsmasq01 ansible_host=10.0.67.101 ansible_port=22001
 remotedesktop01 ansible_host=10.0.67.101 ansible_port=22002
-nfs01 ansible_host=10.0.67.101 ansible_port=22003
-#vyos01 ansible_host=127.0.0.1 ansible_port=11122
+nfsserver01 ansible_host=10.0.67.101 ansible_port=22003
+
+[dnsmasq]
+dnsmasq01
+
+[dnsmasq:vars]
+esxi_iso_path=/home/vinic/downloads/VMware-VMvisor-Installer-7.0U2a-17867351.x86_64.iso
+dnsmasq_syslinux_url=http://repo.rede.tst/syslinux-3.86.zip
+
+[remotedesktop]
+remotedesktop01
+
+[nfsserver]
+nfsserver01
+
+[infraserver:children]
+dnsmasq
+remotedesktop
+nfsserver
+
+[infraserver:vars]
+ansible_ssh_user=root
+ansible_ssh_pass=template
+
+[dnsmasq_clients:children]
+remotedesktop
+nfsserver
 
 [vcenter]
 localhost

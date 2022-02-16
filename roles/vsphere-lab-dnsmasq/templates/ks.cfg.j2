@@ -1,0 +1,16 @@
+vmaccepteula
+install --firstdisk --overwritevmfs --novmfsondisk
+reboot
+
+rootpw VMware1!
+network --bootproto=dhcp --device=vmnic0
+
+%firstboot --interpreter=busybox
+
+# enable & start SSH
+vim-cmd hostsvc/enable_ssh
+vim-cmd hostsvc/start_ssh
+
+# enable & start ESXi Shell
+vim-cmd hostsvc/enable_esx_shell
+vim-cmd hostsvc/start_esx_shell

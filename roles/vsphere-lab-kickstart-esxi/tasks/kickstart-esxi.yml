@@ -1,0 +1,33 @@
+---
+- name: Boots ESXi {{ item }}
+  community.vmware.vmware_guest_powerstate:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    folder: "{{ lab_full_path }}"
+    name: "{{ item }}"
+    state: "{{ esxi_powerstate }}"
+  delegate_to: localhost
+
+- name: Wait for VMware tools to become available in {{ item }}
+  community.vmware.vmware_guest_tools_wait:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    folder: "{{ lab_full_path }}"
+    name: "{{ item }}"
+    datacenter: "{{ datacenter_name }}"
+    timeout: 1200
+  delegate_to: localhost
+  # register: esxi_vm_facts
+
+#TODO improve the verification of the esxi 443 port
+- name: Waits for port 443 of esxi {{ item }} to be available
+  wait_for:
+    host: "{{ external_ip }}"
+    port: "1{{ item[-1:] }}443"
+    delay: 30
+    timeout: 1200
+    state: started

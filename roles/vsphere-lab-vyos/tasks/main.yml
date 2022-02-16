@@ -39,13 +39,13 @@
     state: present
   with_items: "{{ vlans }}"
 
-- name: configure VLANs IP address
+- name: Configure VLANs IP address
   vyos.vyos.vyos_config:
     lines:
       - "set interfaces ethernet {{ vyos_vlan_interface }} vif {{ item.vlan_id }} address {{ item.gateway_ip }}/{{ item.mask }}"
   with_items: "{{ vlans }}"
 
-- name: configure external static routes
+- name: Configure external static routes
   vyos.vyos.vyos_static_routes:
     config:
     - address_families:
@@ -57,7 +57,7 @@
     state: merged
   with_items: "{{ vyos_external_networks }}"
 
-- name: configure nat destination rules
+- name: Configure nat destination rules
   vyos.vyos.vyos_config:
     lines:
       - "set nat destination rule {{idx + 1}} description \"{{item.description}}\""
@@ -70,7 +70,7 @@
   loop_control: 
     index_var: idx 
 
-- name: configure nat source rules
+- name: Configure nat source rules
   vyos.vyos.vyos_config:
     lines:
       - "set nat source rule {{idx + 1}} description \"{{item.description}}\""
@@ -81,6 +81,6 @@
   loop_control: 
     index_var: idx 
 
-- name: save configurations
+- name: Save configurations
   vyos.vyos.vyos_config:
     save: "{{ vyos_save_configuration }}"

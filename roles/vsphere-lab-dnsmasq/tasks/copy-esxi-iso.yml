@@ -1,0 +1,34 @@
+---
+- name: Upload esxi iso to server
+  copy:
+    src: "{{ esxi_iso_path }}"
+    dest: "/tmp"
+  register: esxi_iso
+
+- name: Mount esxi iso
+  mount:
+    src: "{{ esxi_iso.path }}"
+    path: /mnt
+    opts: ro
+    state: mounted
+    fstype: iso9660
+
+- name: Copy iso content to tftp root if necessary
+  copy:
+    src: /mnt/
+    dest: "{{ dnsmasq_tftp_path }}"
+    remote_src: true
+    directory_mode: yes
+
+- name: Mount esxi iso
+  mount:
+    src: "{{ esxi_iso.path }}"
+    path: /mnt
+    opts: ro
+    state: unmounted
+    fstype: iso9660
+
+- name: Remove iso file
+  file: 
+    path: "{{ esxi_iso.path }}"
+    state: absent

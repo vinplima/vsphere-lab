@@ -1,0 +1,13 @@
+---
+# handlers file for roles/vsphere-lab-dnsmasq
+- name: "restart dnsmasq"
+  service:
+    name: "dnsmasq"
+    state: "restarted"
+    enabled: "yes"
+
+- name: "restart nfs-server"
+  service:
+    name: "nfs-server"
+    state: "restarted"
+    enabled: "yes"

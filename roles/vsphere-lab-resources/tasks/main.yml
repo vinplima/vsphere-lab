@@ -1,25 +1,6 @@
 ---
 # tasks file for roles/vsphere-lab-resources
 
-- name: Create vsphere-lab distributed port group
-  community.vmware.vmware_dvs_portgroup:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_credentials.username }}"
-    password: "{{ vcenter_credentials.password }}"
-    validate_certs: "{{ validate_certs }}"
-    portgroup_name: "{{ dvs_portgroup_name }}"
-    switch_name: "{{ dvs_name }}"
-    vlan_id: "0,{{ vlan_ranges }}"
-    vlan_trunk: True
-    num_ports: 120
-    port_binding: static
-    network_policy:
-      promiscuous: true
-      forged_transmits: true
-      mac_changes: true
-    state: present
-  delegate_to: localhost
-
 - name: Create lab root folder
   community.vmware.vcenter_folder:
     hostname: '{{ vcenter_hostname }}'
@@ -45,26 +26,6 @@
     state: present
   delegate_to: localhost
 
-- name: Add lab resource pool to vCenter
-  community.vmware.vmware_resource_pool:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_credentials.username }}'
-    password: '{{ vcenter_credentials.password }}'
-    validate_certs: "{{ validate_certs }}"
-    datacenter: "{{ datacenter_name }}"
-    cluster: "{{ cluster_name }}"
-    resource_pool: "{{ resource_pool.name }}"
-    mem_shares: "{{ resource_pool.memory.shares }}"
-    mem_limit: "{{ resource_pool.memory.limit }}"
-    mem_reservation: "{{ resource_pool.memory.reservation }}"
-    mem_expandable_reservations: "{{ resource_pool.memory.expandable }}"
-    cpu_shares: "{{ resource_pool.cpu.shares }}"
-    cpu_limit: "{{ resource_pool.cpu.limit }}"
-    cpu_reservation: "{{ resource_pool.cpu.reservation }}"
-    cpu_expandable_reservations: "{{ resource_pool.cpu.expandable }}"
-    state: present
-  delegate_to: localhost
-
 - name: Gather all VMs in lab folder
   community.vmware.vmware_vm_info:
     hostname: '{{ vcenter_hostname }}'
@@ -83,158 +44,43 @@
   set_fact:
     to_be_created_vms: "{{ [vyos_server.name] + esxi_servers | map(attribute='name') | list + infra_servers | map(attribute='name') | list }}"
 
-- name: Creates infra virtual machines
-  community.vmware.vmware_guest:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_credentials.username }}'
-    password: '{{ vcenter_credentials.password }}'
-    validate_certs: "{{ validate_certs }}"
-    datacenter: "{{ datacenter_name }}"
-    state: present
-    folder: "{{ lab_full_path }}"
-    template: "{{ templates.infra_linux }}"
-    name: "{{ item.name }}"
-    cluster: "{{ cluster_name }}"
-    resource_pool: "{{ resource_pool.name }}"
-    datastore: "{{ datastore_name }}"
-    hardware:
-      num_cpus: "{{ item.num_cpus }}"
-      memory_mb: "{{ item.memory_gb * 1024 }}"
-    networks:
-      - name: "{{ dvs_portgroup_name }}"
-        ip: "{{ item.ip }}"
-        netmask: "{{ item.netmask }}"
-        gateway: "{{ management_network_gateway }}"
-    wait_for_ip_address: True
-    wait_for_ip_address_timeout: 600
-    customization:
-      dns_servers: "{{ dns_servers }}"
-  delegate_to: localhost
-  with_items: "{{ infra_servers }}"
-  when: item.name not in created_vms
-
-# no network will be created to avoid customization problems
-- name: Creates nested esxi virtual machines
-  community.vmware.vmware_guest:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_credentials.username }}'
-    password: '{{ vcenter_credentials.password }}'
-    validate_certs: "{{ validate_certs }}"
-    datacenter: "{{ datacenter_name }}"
-    state: poweredoff
-    folder: "{{ lab_full_path }}"
-    template: "{{ templates.nested_esxi }}"
-    name: "{{ item.name }}"
-    cluster: "{{ cluster_name }}"
-    resource_pool: "{{ resource_pool.name }}"
-    datastore: "{{ datastore_name }}"
-    hardware:
-      num_cpus: "{{ item.num_cpus }}"
-      memory_mb: "{{ item.memory_gb * 1024 }}"
-  delegate_to: localhost
-  with_items: "{{ esxi_servers }}"
-  when: item.name not in created_vms
-
-- name: Creates nested esxi network adapters with predefined mac address
-  community.vmware.vmware_guest_network:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_credentials.username }}'
-    password: '{{ vcenter_credentials.password }}'
-    validate_certs: "{{ validate_certs }}"
-    datacenter: "{{ datacenter_name }}"
-    name: "{{ item.0.name }}"
-    mac_address: "{{ item.1 }}"
-    network_name: "{{ dvs_portgroup_name }}"
-  delegate_to: localhost
-  with_subelements: 
-    - "{{ esxi_servers }}"
-    - "mac_addresses"
-  when: item.0.name not in created_vms
-
-- name: Creates vyos virtual machine
-  community.vmware.vmware_guest:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_credentials.username }}'
-    password: '{{ vcenter_credentials.password }}'
-    validate_certs: "{{ validate_certs }}"
-    datacenter: "{{ datacenter_name }}"
-    state: poweredoff
-    folder: "{{ lab_full_path }}"
-    template: "{{ templates.vyos_vm }}"
-    name: "{{ vyos_server.name }}"
-    cluster: "{{ cluster_name }}"
-    resource_pool: "{{ resource_pool.name }}"
-    datastore: "{{ datastore_name }}"
-    hardware:
-      num_cpus: "{{ vyos_server.num_cpus }}"
-      memory_mb: "{{ vyos_server.memory_gb * 1024 }}"
-  delegate_to: localhost
-  when: vyos_server.name not in created_vms
-
-- name: Creates vyos virtual machine network interfaces
-  community.vmware.vmware_guest_network:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_credentials.username }}'
-    password: '{{ vcenter_credentials.password }}'
-    validate_certs: "{{ validate_certs }}"
-    datacenter: "{{ datacenter_name }}"
-    name: "{{ vyos_server.name }}"
-    mac_address: "{{ item.mac }}"
-    network_name: "{{ item.network_name }}"
-  delegate_to: localhost
-  with_items: 
-    - mac: "{{ vyos_server.provision_mac_address }}"
-      network_name: "{{ dpg_provision_name }}"
-    - mac: "{{ vyos_server.external_mac_address }}"
-      network_name: "{{ dpg_external_name }}"
-    - mac: "{{ vyos_server.internal_mac_address }}"
-      network_name: "{{ dvs_portgroup_name }}"
-  when: vyos_server.name not in created_vms
-
-- name: Join all VMs in same ESXi - affinity rule
-  community.vmware.vmware_vm_vm_drs_rule:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_credentials.username }}"
-    password: "{{ vcenter_credentials.password }}"
-    validate_certs: "{{ validate_certs }}"
-    cluster_name: "{{ cluster_name }}"
-    vms: "{{ to_be_created_vms }}"
-    drs_rule_name: "{{ drs_affinity_rule }}"
-    enabled: True
-    mandatory: True
-    affinity_rule: True
-    state: present
-  delegate_to: localhost
+- name: Creates virtual infra and virtual machines
+  include_tasks: create-virtual-infra.yml
   when: (created_vms | length) < (to_be_created_vms | length)
 
-- name: Starts vyos VM
+- name: Ensure virtual machine powerstate
   community.vmware.vmware_guest_powerstate:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_credentials.username }}"
     password: "{{ vcenter_credentials.password }}"
     validate_certs: "{{ validate_certs }}"
     folder: "{{ lab_full_path }}"
-    name: "{{ vyos_server.name }}"
-    state: powered-on
+    name: "{{ item.name }}"
+    state: "{{ item.initial_powerstate }}"
   delegate_to: localhost
-  register: deploy
+  with_items: "{{ [vyos_server] + esxi_servers + infra_servers }}"
 
-- name: Sleeps while VM is starting 
+- name: Sleeps while VMs are starting 
   wait_for: 
-    timeout: 120
+    timeout: 60
 
-- name: Wait for VMware tools to become available in vyos vm
-  community.vmware.vmware_guest_tools_wait:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_credentials.username }}"
-    password: "{{ vcenter_credentials.password }}"
-    validate_certs: "{{ validate_certs }}"
-    folder: "{{ lab_full_path }}"
-    name: "{{ vyos_server.name }}"
-    datacenter: "{{ datacenter_name }}"
-  delegate_to: localhost
-  register: vyos_vm_facts
+- name: Get vyos ip data
+  block:
 
-- name: Sets vyos provision ipv4 fact
-  set_fact: 
-    vyos_provision_ip: "{{ vyos_vm_facts.instance.ipv4 }}"
+    - name: Wait for VMware tools to become available in vyos vm
+      community.vmware.vmware_guest_tools_wait:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_credentials.username }}"
+        password: "{{ vcenter_credentials.password }}"
+        validate_certs: "{{ validate_certs }}"
+        folder: "{{ lab_full_path }}"
+        name: "{{ vyos_server.name }}"
+        datacenter: "{{ datacenter_name }}"
+      delegate_to: localhost
+      register: vyos_vm_facts
+
+    - name: Sets vyos provision ipv4 fact
+      set_fact: 
+        vyos_provision_ip: "{{ vyos_vm_facts.instance.ipv4 }}"
+
+  when: vyos_provision_ip is undefined

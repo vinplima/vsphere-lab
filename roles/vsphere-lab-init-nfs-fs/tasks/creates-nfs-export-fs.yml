@@ -1,0 +1,28 @@
+---
+- name: Set LV name fact
+  set_fact:
+    lv_name: "{{ item[9:] }}"
+
+- name: Creates export LV {{ lv_name }}
+  community.general.lvol:
+    vg: "{{ vg_name }}"
+    lv: "{{ lv_name }}"
+    size: "{{ nfs_exports.export_size_gb }}g"
+    
+- name: Creates filesystem in LV {{ lv_name }}
+  community.general.filesystem:
+    fstype: "{{ fstype }}"
+    dev: "/dev/mapper/{{ vg_name }}-{{ lv_name }}"
+
+- name: Creates directory {{ item }}
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+
+- name: Mount nfs export filesystem
+  ansible.posix.mount:
+    path: "{{ item }}"
+    src: "/dev/mapper/{{ vg_name }}-{{ lv_name }}"
+    fstype: "{{ fstype }}"
+    state: mounted

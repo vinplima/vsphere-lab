@@ -86,6 +86,8 @@ Vagrant.configure("2") do |config|
     remotedesktop01.vm.box = "oraclebase/oracle-8"
 
     remotedesktop01.vm.host_name = "remote-desktop." + DOMAIN
+    remotedesktop01.vm.network :forwarded_port, guest: 22, host: 11222, id: 'ssh'
+    #remotedesktop01.vm.network :forwarded_port, guest: 5901, host: 5901
 
     remotedesktop01.vm.network "private_network", ip: REMOTEDESKTOP01_INTERNAL_IP, auto_config: true
     

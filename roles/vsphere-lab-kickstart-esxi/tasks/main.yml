@@ -1,0 +1,5 @@
+---
+# tasks file for roles/vsphere-lab-kickstart-esxi
+- name: Kickstart ESXis
+  include_tasks: kickstart-esxi.yml
+  with_items: "{{ esxi_servers | map(attribute='name') | list }}"

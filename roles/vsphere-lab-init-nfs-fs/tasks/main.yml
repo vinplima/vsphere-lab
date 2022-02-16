@@ -1,0 +1,17 @@
+---
+# tasks file for roles/vsphere-lab-init-nfs-fs
+- name: Creates partition for LVM
+  community.general.parted:
+    device: "{{ device_path }}"
+    number: 1
+    state: present
+  register: partition_info
+
+- name: Creates LVM VG
+  community.general.lvg:
+    vg: "{{ vg_name }}"
+    pvs: "{{ device_path }}1"
+
+- name: Creates LVs, FSs and mount points
+  include_tasks: creates-nfs-export-fs.yml
+  with_items: "{{ nfs_exports.paths }}"
