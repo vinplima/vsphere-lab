@@ -1,0 +1,67 @@
+---
+# tasks file for roles/vsphere-lab-prepare-remote-desktop
+- name: Ensure user {{ win_user_name }} is present
+  win_user:
+    name: "{{ win_user_name }}"
+    password: "{{ win_user_password }}"
+    state: present
+    groups:
+      - Administrators
+
+- name: Start terminal service
+  win_service:
+    name: TermService
+    state: started
+
+- name: Creates temporary directory
+  win_file:
+    path: "{{ tmp_directory }}"
+    state: directory
+
+- name: Download firefox installer
+  win_get_url:
+    url: "{{ firefox_download_url }}"
+    dest: "{{ tmp_directory }}\\firefox_installer.exe"
+  register: firefox_installer
+
+- name: Install firefox
+  win_package:
+    path: "{{ firefox_installer.dest }}"
+    arguments: /S
+
+- name: Download putty
+  win_get_url:
+    url: "{{ putty_download_url }}"
+    dest: "{{ tmp_directory }}\\putty_installer.msi"
+  register: putty_installer
+
+- name: Install putty
+  win_package:
+    path: "{{ putty_installer.dest }}"
+    # log_path: C:\Temp\output.log
+    # arguments: /qn
+
+- name: Copy remote console zip to server
+  win_copy:
+    src: "{{ vmware_remote_console_zip_path }}"
+    dest: "{{ tmp_directory }}/remote_console.zip"
+  register: vmware_remote_console_file
+
+- name: Unzip remote console
+  win_unzip: 
+    src: "{{ vmware_remote_console_file.dest }}"
+    dest: "{{ tmp_directory }}/RemoteConsole"
+  register: remote_console_unzipped
+
+- name: Find remote console installer path
+  win_find: 
+    paths: "{{ remote_console_unzipped.dest }}"
+    patterns:
+      - '*.exe'
+  register: remote_console_exe
+
+- name: Install remote console
+  win_package:
+    path: "{{ remote_console_exe.files.0.path }}"
+    arguments: /s /v "/qn EULAS_AGREED=1 AUTOSOFTWAREUPDATE=0 DATACOLLECTION=0"
+
