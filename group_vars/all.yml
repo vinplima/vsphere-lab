@@ -8,6 +8,7 @@ lab_padded_id: "{{ '%02d'|format(lab_id|int) }}"
 esxi_mac_seed: "00:50:56:3F:{{ lab_padded_id }}:"
 
 management_network_gateway: 172.16.100.1
+global_mtu: 9000
 
 vlans:
   - vlan_id: 2001
@@ -43,6 +44,7 @@ infra_servers:
     hostname: dnsmasq01
     ip: 172.16.100.11
     netmask: 255.255.255.0
+    prefix: 24
     num_cpus: 2
     memory_gb: 1 
     disk: []
@@ -51,6 +53,7 @@ infra_servers:
     hostname: nfsserver01
     ip: 172.16.100.12
     netmask: 255.255.255.0
+    prefix: 24
     num_cpus: 2
     memory_gb: 2 
     disk:
@@ -119,6 +122,14 @@ dns_servers:
 ntp_servers:
   - 10.0.11.163
   - 10.0.11.164
+
+nfs_server:
+  ip: 172.16.202.12
+  vlan: 2002
+  prefix: 24
+  netmask: 255.255.255.0
+  name: nfs
+
   
 nfs_exports:
   paths:

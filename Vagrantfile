@@ -8,8 +8,8 @@ DOMAIN = 'vsphere.lab'
 # INTERNAL NETWORK - 172.16.100.0/24
 VYOS01_INTERNAL_IP = "172.16.100.101" # configured as .1 by ansible
 DNSMASQ01_INTERNAL_IP = "172.16.100.11"
-REMOTEDESKTOP01_INTERNAL_IP = "172.16.100.12"
-NFS01_INTERNAL_IP = "172.16.100.13"
+NFS01_INTERNAL_IP = "172.16.100.12"
+REMOTEDESKTOP01_INTERNAL_IP = "172.16.100.13"
 
 # PUBLIC NETWORK - 192.168.0.0/24
 VYOS01_PUBLIC_IP = "192.168.0.101"
@@ -72,7 +72,7 @@ Vagrant.configure("2") do |config|
     
     nfs01.vm.synced_folder ".", "/vagrant", disabled: true
 
-    nfs01.vm.provision "shell", run: "always", inline: $script_route
+    # nfs01.vm.provision "shell", run: "always", inline: $script_route
 
     nfs01.vm.provider "virtualbox" do |v|
       v.memory = "1024"
