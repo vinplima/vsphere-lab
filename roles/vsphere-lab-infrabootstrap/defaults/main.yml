@@ -10,3 +10,6 @@ repos:
 
 packages:
   - chrony
+  - libnsl.x86_64
+  - langpacks-en
+  - glibc-all-langpacks

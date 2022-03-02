@@ -1,0 +1,22 @@
+---
+# tasks file for roles/vsphere-lab-deploy-vcenter
+
+# install ovftool
+- name: Check if ovftool is installed
+  shell: command -v ovftool >/dev/null 2>&1
+  register: ovftool_installed
+  ignore_errors: yes
+
+- name: Install ovftool
+  include_tasks: install-ovftool.yml
+  when: ovftool_installed.rc == 1
+
+# deploy vcenter
+- name: Check if vcenter was deployed
+  shell: "ovftool vi://root:'{{ default_lab_password }}'@{{ esxi_servers.0.hostname }} | grep vcenter > /dev/null 2>&1"
+  register: vcenter_deployed
+  ignore_errors: yes
+
+- name: Deploy vcenter
+  include_tasks: deploy-vcenter.yml
+  when: vcenter_deployed.rc == 1

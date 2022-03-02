@@ -1,0 +1,20 @@
+---
+# install ovftool
+
+# copy ovftool bundle
+- name: Upload ovftool installer to server
+  copy:
+    src: "{{ ovftool_bundle_path }}"
+    dest: "/tmp"
+    mode: '0755'
+  register: ovftool_bundle
+
+# install ovftool
+- name: Executes ovftool installer
+  shell: "{{ ovftool_bundle.dest }} --eulas-agreed --required"
+  
+# clean installer
+- name: Removes ovftool installer
+  file:
+    path: "{{ ovftool_bundle.dest }}"
+    state: absent

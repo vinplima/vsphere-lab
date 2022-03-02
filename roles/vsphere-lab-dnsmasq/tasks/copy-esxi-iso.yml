@@ -7,7 +7,7 @@
 
 - name: Mount esxi iso
   mount:
-    src: "{{ esxi_iso.path }}"
+    src: "{{ esxi_iso.dest }}"
     path: /mnt
     opts: ro
     state: mounted
@@ -20,7 +20,7 @@
     remote_src: true
     directory_mode: yes
 
-- name: Mount esxi iso
+- name: Unmount esxi iso
   mount:
     src: "{{ esxi_iso.path }}"
     path: /mnt

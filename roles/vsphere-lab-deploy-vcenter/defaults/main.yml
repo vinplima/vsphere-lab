@@ -1,0 +1,10 @@
+---
+# defaults file for roles/vsphere-lab-deploy-vcenter
+appliance:
+  deployment_option: tiny
+  thin_disk_mode: "true"
+
+sso:
+  domain_name: vsphere.local
+
+ceip_enabled: "false"

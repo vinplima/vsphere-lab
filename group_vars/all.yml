@@ -9,6 +9,8 @@ esxi_mac_seed: "00:50:56:3F:{{ lab_padded_id }}:"
 
 management_network_gateway: 172.16.100.1
 
+default_lab_password: VMware1!
+
 vlans:
   - vlan_id: 2001
     gateway_ip: 172.16.201.1
@@ -34,9 +36,9 @@ vyos_server:
 
 vcenter_server:
   name: "vapp-vcenter7"
-  hostname: vcenter-lab{{ lab_padded_id }}
+  hostname: vcenter
   ip: 172.16.100.30
-  netmask: 255.255.255.0
+  prefix: 24
 
 infra_servers:
   - name: "vsphere-lab{{ lab_padded_id }}-dnsmasq"
@@ -126,5 +128,13 @@ nfs_exports:
     - /srv/nfs/datastore02
     - /srv/nfs/datastore03
     - /srv/nfs/datastore04
+  datastores:
+    - nfs_datastore01
+    - nfs_datastore02
+    - nfs_datastore03
+    - nfs_datastore04
   export_size_gb: 100
   client_network: 172.16.202.0/24
+
+
+pg_management_name: pgManagement
