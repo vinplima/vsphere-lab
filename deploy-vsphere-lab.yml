@@ -125,5 +125,16 @@
     - roles/vsphere-lab-kickstart-esxi
 
 #
+# Configure ESXi for vCenter deployment
+#
+
+
+#
 # Installs vCenter Server
 #
+- name: Deploy vcenter appliance
+  hosts: deploy-vcenter
+  gather_facts: true
+
+  roles:
+    - roles/vsphere-lab-deploy-vcenter
