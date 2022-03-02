@@ -1,0 +1,6 @@
+---
+# defaults file for roles/vsphere-lab-init-nfs-network
+network_services:
+  - NetworkManager
+
+network_vlan_interface: ens192
