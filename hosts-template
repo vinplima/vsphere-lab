@@ -1,14 +1,18 @@
-localhost ansible_python_interpreter=/home/vinic/.local/share/virtualenvs/vsphere-lab-ZwpNLNrD/bin/python
-dnsmasq01 ansible_host=10.0.67.101 ansible_port=22001
-remotedesktop01 ansible_host=10.0.67.101 ansible_port=22002
-nfsserver01 ansible_host=10.0.67.101 ansible_port=22003
+#
+# Hosts templates
+#
+
+localhost
+dnsmasq01 ansible_host={external-ip} ansible_port=22001
+nfsserver01 ansible_host={external-ip} ansible_port=22003
+remotedesktop01 ansible_host={external-ip} ansible_port=22003
 
 [dnsmasq]
 dnsmasq01
 
 [dnsmasq:vars]
-esxi_iso_path=/home/vinic/downloads/VMware-VMvisor-Installer-7.0U2a-17867351.x86_64.iso
-dnsmasq_syslinux_url=http://repo.rede.tst/syslinux-3.86.zip
+esxi_iso_path={path-to-esxi-iso}
+#dnsmasq_syslinux_url=
 
 [remotedesktop]
 remotedesktop01
@@ -16,9 +20,11 @@ remotedesktop01
 [nfsserver]
 nfsserver01
 
+[nfsserver:vars]
+#network_vlan_interface=
+
 [infraserver:children]
 dnsmasq
-remotedesktop
 nfsserver
 
 [infraserver:vars]
@@ -26,20 +32,33 @@ ansible_ssh_user=root
 ansible_ssh_pass=template
 
 [dnsmasq_clients:children]
-remotedesktop
 nfsserver
+
+[deploy-vcenter:children]
+dnsmasq
+
+[deploy-vcenter:vars]
+ovftool_bundle_path={path-to-ovftool-bundle}
+vcsa_iso_path={path-to-vcsa-iso}
+
+[remotedesktop]
+remotedesktop01
+
+[remotedesktop:vars]
+ansible_shell_type=cmd
+shell_type=cmd
 
 [vcenter]
 localhost
 
 [vcenter:vars]
-dvs_name=vdsMain
-datacenter_name=TST
-vcenter_hostname=vcentertst.rede.tst
-cluster_name=CLS_MAIN
-datastore_name=DSC_DORADO8K_LAB
-dpg_provision_name=seg-vlan-homologacao
-dpg_external_name=seg-vlan-rede-lab
+#dvs_name=
+#datacenter_name=
+#vcenter_hostname=
+#cluster_name=
+#datastore_name=
+#dpg_provision_name=
+#dpg_external_name=
 
 [vyos]
 # dynamically configured
@@ -51,9 +70,8 @@ ansible_ssh_user=vyos
 ansible_ssh_pass=laboratory
 
 [all:vars]
-#ansible_user=vagrant
-present_lab_id=1
-external_ip=10.0.67.101
-external_cidr=23
-external_gateway=10.0.66.1
-route_networks=10.0.0.0/16,192.168.0.0/16
+present_lab_id={lab-id}
+external_ip={external-ip}
+external_cidr={external-cidr}
+external_gateway={external-gateway}
+route_networks={external-networks}
