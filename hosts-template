@@ -13,6 +13,14 @@ dnsmasq_syslinux_url=http://repo.rede.tst/syslinux-3.86.zip
 [remotedesktop]
 remotedesktop01
 
+[remotedesktop:vars]
+ansible_shell_type=cmd
+shell_type=cmd
+ansible_user=administrator
+ansible_password=VMware1!
+#firefox_download_url=
+#putty_download_url=
+
 [nfsserver]
 nfsserver01
 
