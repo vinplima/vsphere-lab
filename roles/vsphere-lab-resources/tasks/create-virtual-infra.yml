@@ -33,6 +33,28 @@
     state: present
   delegate_to: localhost
 
+- name: Gather cluster {{ cluster_name }} info
+  community.vmware.vmware_cluster_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    cluster_name: "{{ cluster_name }}"
+  delegate_to: localhost
+  register: cluster_info
+
+- name: Add each cluster {{ cluster_name }} host to vDS {{ vds_name }} with no uplinks
+  community.vmware.vmware_dvs_host:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    esxi_hostname: "{{ item.name }}"
+    switch_name: "{{ vds_name }}"
+    state: present
+  with_items: "{{ cluster_info.clusters[cluster_name].hosts }}"
+  delegate_to: localhost
+
 - name: Add host to vDS
   community.vmware.vmware_dvs_host:
     hostname: "{{ vcenter_hostname }}"
