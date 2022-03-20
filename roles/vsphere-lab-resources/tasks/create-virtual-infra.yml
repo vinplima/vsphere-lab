@@ -1,13 +1,27 @@
 ---
 # creates necessary infrastructure and the virtual machines
-- name: Create vsphere-lab distributed port group
+- name: Create Lab Virtual Distributed Switch
+  community.vmware.vmware_dvswitch:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    folder: "{{ root_folder_path }}"
+    switch_name: "{{ vds_name }}"
+    switch_version: "{{ vds_version }}"
+    mtu: "{{ vds_mtu }}"
+    uplink_quantity: "{{ vds_uplink_quantity }}"
+    state: "present"
+  delegate_to: localhost
+
+- name: Create Lab distributed port group
   community.vmware.vmware_dvs_portgroup:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_credentials.username }}"
     password: "{{ vcenter_credentials.password }}"
     validate_certs: "{{ validate_certs }}"
-    portgroup_name: "{{ dvs_portgroup_name }}"
-    switch_name: "{{ dvs_name }}"
+    portgroup_name: "{{ vds_dpg_name }}"
+    switch_name: "{{ vds_name }}"
     vlan_id: "0,{{ vlan_ranges }}"
     vlan_trunk: True
     num_ports: 120
@@ -17,6 +31,17 @@
       forged_transmits: true
       mac_changes: true
     state: present
+  delegate_to: localhost
+
+- name: Add host to vDS
+  community.vmware.vmware_dvs_host:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    esxi_hostname: "{{ esxi_hostname }}"
+    switch_name: "{{ vds_name }}"
+    state: "{{ infra_state }}"
   delegate_to: localhost
 
 - name: Add lab resource pool to vCenter
@@ -58,7 +83,7 @@
       num_cpus: "{{ item.num_cpus }}"
       memory_mb: "{{ item.memory_gb * 1024 }}"
     networks:
-      - name: "{{ dvs_portgroup_name }}"
+      - name: "{{ vds_dpg_name }}"
         ip: "{{ item.ip }}"
         netmask: "{{ item.netmask }}"
         gateway: "{{ management_network_gateway }}"
@@ -69,6 +94,38 @@
       hostname: "{{ item.hostname }}"
   delegate_to: localhost
   with_items: "{{ infra_servers }}"
+  when: item.name not in created_vms
+
+- name: Creates rdp virtual machines
+  community.vmware.vmware_guest:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    datacenter: "{{ datacenter_name }}"
+    state: present
+    folder: "{{ lab_full_path }}"
+    template: "{{ templates.windows }}"
+    name: "{{ item.name }}"
+    cluster: "{{ cluster_name }}"
+    resource_pool: "{{ resource_pool.name }}"
+    datastore: "{{ datastore_name }}"
+    disk: "{{ item.disk }}"
+    hardware:
+      num_cpus: "{{ item.num_cpus }}"
+      memory_mb: "{{ item.memory_gb * 1024 }}"
+    networks:
+      - name: "{{ vds_dpg_name }}"
+        ip: "{{ item.ip }}"
+        netmask: "{{ item.netmask }}"
+        gateway: "{{ management_network_gateway }}"
+    wait_for_ip_address: True
+    wait_for_ip_address_timeout: 600
+    customization:
+      dns_servers: "{{ dns_servers }}"
+      hostname: "{{ item.hostname }}"
+  delegate_to: localhost
+  with_items: "{{ rdp_servers }}"
   when: item.name not in created_vms
 
 # no network will be created to avoid customization problems
@@ -109,7 +166,7 @@
     datacenter: "{{ datacenter_name }}"
     name: "{{ item.0.name }}"
     mac_address: "{{ item.1 }}"
-    network_name: "{{ dvs_portgroup_name }}"
+    network_name: "{{ vds_dpg_name }}"
   delegate_to: localhost
   with_subelements: 
     - "{{ esxi_servers }}"
@@ -154,7 +211,7 @@
     - mac: "{{ vyos_server.external_mac_address }}"
       network_name: "{{ dpg_external_name }}"
     - mac: "{{ vyos_server.internal_mac_address }}"
-      network_name: "{{ dvs_portgroup_name }}"
+      network_name: "{{ vds_dpg_name }}"
   when: vyos_server.name not in created_vms
 
 - name: Join all VMs in same ESXi - affinity rule
