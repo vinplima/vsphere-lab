@@ -25,6 +25,30 @@ vlans:
     gateway_ip: 172.16.203.1
     mask: 24
     description: vSAN Network
+  - vlan_id: 2004
+    gateway_ip: 172.16.204.1
+    mask: 24
+    description: VLAN for App Network
+  - vlan_id: 2005
+    gateway_ip: 172.16.205.1
+    mask: 24
+    description: VLAN for Database Network
+  - vlan_id: 2006
+    gateway_ip: 172.16.206.1
+    mask: 24
+    description: VLAN for NSX-T Transport Node Overlay
+  - vlan_id: 2007
+    gateway_ip: 172.16.207.1
+    mask: 24
+    description: VLAN for NSX-T Edge Node Overlay
+  - vlan_id: 2008
+    gateway_ip: 172.16.208.1
+    mask: 24
+    description: VLAN for NSX-T Edge Node Left Uplink
+  - vlan_id: 2009
+    gateway_ip: 172.16.209.1
+    mask: 24
+    description: VLAN for NSX-T Edge Node Right Uplink
 
 vyos_server:
   name: "vsphere-lab{{ lab_padded_id }}-vyos"
@@ -63,6 +87,17 @@ infra_servers:
         type: thin
       - size_gb: 500
         type: thin
+    initial_powerstate: powered-on
+
+rdp_servers:
+  - name: "vsphere-lab{{ lab_padded_id }}-rdp"
+    hostname: rdp01
+    ip: 172.16.100.13
+    netmask: 255.255.255.0
+    prefix: 24
+    num_cpus: 2
+    memory_gb: 8
+    disk: []
     initial_powerstate: powered-on
 
 esxi_servers:

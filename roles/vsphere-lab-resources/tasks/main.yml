@@ -1,7 +1,7 @@
 ---
 # tasks file for roles/vsphere-lab-resources
 
-- name: Create lab root folder
+- name: Create lab VM root folder
   community.vmware.vcenter_folder:
     hostname: '{{ vcenter_hostname }}'
     username: '{{ vcenter_credentials.username }}'
@@ -13,7 +13,7 @@
     state: present
   delegate_to: localhost
 
-- name: Create present lab folder
+- name: Create present lab VM folder
   community.vmware.vcenter_folder:
     hostname: '{{ vcenter_hostname }}'
     username: '{{ vcenter_credentials.username }}'
@@ -23,6 +23,18 @@
     parent_folder: "{{ root_folder_name }}" 
     folder_name: "{{ lab_folder_name }}"
     folder_type: vm
+    state: present
+  delegate_to: localhost
+
+- name: Create lab network folder
+  community.vmware.vcenter_folder:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    datacenter_name: "{{ datacenter_name }}"
+    folder_name: "{{ root_folder_name }}"
+    folder_type: network
     state: present
   delegate_to: localhost
 
@@ -42,7 +54,7 @@
 
 - name: Set list with VMs to be created
   set_fact:
-    to_be_created_vms: "{{ [vyos_server.name] + esxi_servers | map(attribute='name') | list + infra_servers | map(attribute='name') | list }}"
+    to_be_created_vms: "{{ [vyos_server.name] + esxi_servers | map(attribute='name') | list + infra_servers | map(attribute='name') | list + rdp_servers | map(attribute='name') | list }}"
 
 - name: Creates virtual infra and virtual machines
   include_tasks: create-virtual-infra.yml

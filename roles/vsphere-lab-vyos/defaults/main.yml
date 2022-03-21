@@ -90,6 +90,14 @@ vyos_nat_rules:
       translation:
         address: "{{ vcenter_server.ip }}"
         port: 443
+    - description: "Port Forward: vcenter server HTTPS {{ rdp_servers.0.ip }}"
+      destination: 
+        port: 3389
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ rdp_servers.0.ip }}"
+        port: 3389
   source:
     - description: "Masquerade internal Network"
       source:

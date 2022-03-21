@@ -17,6 +17,14 @@ esxi_iso_path={path-to-esxi-iso}
 [remotedesktop]
 remotedesktop01
 
+[remotedesktop:vars]
+ansible_shell_type=cmd
+shell_type=cmd
+ansible_user=administrator
+ansible_password=VMware1!
+#firefox_download_url=
+#putty_download_url=
+
 [nfsserver]
 nfsserver01
 
