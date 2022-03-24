@@ -10,6 +10,7 @@ esxi_mac_seed: "00:50:56:3F:{{ lab_padded_id }}:"
 management_network_gateway: 172.16.100.1
 global_mtu: 9000
 
+# password used throughout the lab
 default_lab_password: VMware1!
 
 vlans:
@@ -167,7 +168,6 @@ nfs_server:
   netmask: 255.255.255.0
   name: nfs
 
-  
 nfs_exports:
   paths:
     - /srv/nfs/datastore01
@@ -182,5 +182,15 @@ nfs_exports:
   export_size_gb: 100
   client_network: 172.16.202.0/24
 
-
+# name of the local port group used for vCenter deployment
 pg_management_name: pgManagement
+
+# esxi root user
+esxi_root: root
+
+# local datastore prefix
+local_datastore_prefix: local_
+
+# esxi01 external ports
+esxi01_ssh_port: 11022
+esxi01_https_port: 11443

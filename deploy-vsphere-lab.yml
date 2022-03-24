@@ -127,7 +127,16 @@
 #
 # Configure ESXi for vCenter deployment
 #
+- name: Prepare esxi01 for vCenter installation
+  hosts: localhost
+  connection: local
+  gather_facts: true
 
+  collections:
+    - community.vmware
+
+  roles:
+    - roles/vsphere-lab-prepare-esxi-for-vcenter
 
 #
 # Installs vCenter Server
