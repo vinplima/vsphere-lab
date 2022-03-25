@@ -1,0 +1,7 @@
+---
+# tasks file for roles/vsphere-lab-create-inventories
+- name: Create inventory file for {{ lab_padded_id }}
+  template: 
+    src: hosts.j2
+    dest: "{{ inventories_path }}/hosts-vsphere-lab-{{ lab_padded_id }}"
+    mode: 0644

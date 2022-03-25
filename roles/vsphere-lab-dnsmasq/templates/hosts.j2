@@ -5,6 +5,12 @@
 {{ item.ip }}  {{ item.hostname }}
 {% endfor %}
 
+{% for item in rdp_servers %}
+{{ item.ip }}  {{ item.hostname }}
+{% endfor %}
+
 {% for item in esxi_servers %}
 {{ item.ip }}  {{ item.hostname }}
 {% endfor %}
+
+{{ vcenter_server.ip }} {{ vcenter_server.hostname }}

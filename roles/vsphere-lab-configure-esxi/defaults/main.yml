@@ -1,3 +1,0 @@
----
-# defaults file for roles/vsphere-lab-configure-esxi
-validate_certs: false

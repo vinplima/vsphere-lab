@@ -1,0 +1,72 @@
+---
+# labs to be created
+lab_count: 20
+
+# IP list, one for each lab to be created
+lab_ips:
+
+#
+# network data
+#
+external_cidr: 
+external_gateway: 
+
+# comma separated ntp and dns servers list, and route networks in ip/mask format
+ntp_servers_list: 
+dns_servers_list: 
+route_networks: 
+
+# sets the local python interpreter (for virtual environments)
+ansible_python_interpreter:
+
+#
+# files that need to be available in the ansible host for deployment
+#
+
+# esxi 7 iso path
+esxi_iso_path:
+
+# VCSA 7 iso path
+vcsa_iso_path: 
+
+# OVFTool bundle path
+ovftool_bundle_path:
+
+# Remote Console zip path
+vmware_remote_console_zip_path:
+
+#
+# vcenter server variables (enviroment to be used)
+#
+datacenter_name:
+vcenter_hostname:
+cluster_name:
+datastore_name:
+
+# port group which will be used to provision vyos
+dpg_provision_name: 
+
+# port group which will be used to access the lab
+dpg_external_name:
+
+#
+# optional itens
+#
+
+# URL to download syslinux (used in dnsmasq role)
+#dnsmasq_syslinux_url:
+
+# interface name used for vlan in NFS and iSCSI servers
+#network_vlan_interface:
+
+# URL to download firefox (used in remote desktop)
+#firefox_download_url:
+
+# URL to download putty (used in remote desktop)
+#putty_download_url:
+
+# URL of the ol8_baseos_latest or equivalent (used in all infraservers)
+#ol8_baseos_latest_repo_url:
+
+# URL of the ol8_appstream or equivalent (used in all infraservers)
+#ol8_appstream_repo_url: 

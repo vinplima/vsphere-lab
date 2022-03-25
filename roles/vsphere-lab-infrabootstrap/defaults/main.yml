@@ -2,10 +2,10 @@
 # defaults file for roles/vsphere-lab-infrabootstrap
 repos:
   - name: ol8_baseos_latest
-    url: 'https://yum$ociregion.$ocidomain/repo/OracleLinux/OL8/baseos/latest/$basearch/'
+    url: "{{ ol8_baseos_latest_repo_url | default('https://yum$ociregion.$ocidomain/repo/OracleLinux/OL8/baseos/latest/$basearch/') }}"
     gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
   - name: ol8_appstream
-    url: 'https://yum$ociregion.$ocidomain/repo/OracleLinux/OL8/appstream/$basearch/'
+    url: "{{ ol8_appstream_repo_url | default('https://yum$ociregion.$ocidomain/repo/OracleLinux/OL8/appstream/$basearch/') }}"
     gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
 
 packages:

@@ -1,0 +1,106 @@
+#
+# Lab {{ lab_id }} inventory file
+#
+
+localhost ansible_python_interpreter={{ ansible_python_interpreter }}
+
+{% for item in infra_servers %}
+{{ item.hostname }} ansible_host={{ external_ip }} ansible_port={{ item.external_port }}
+{% endfor %}
+
+{% for item in rdp_servers %}
+{{ item.hostname }} ansible_host={{ external_ip }} ansible_port={{ item.external_port }}
+{% endfor %}
+
+[dnsmasq]
+{{ infra_servers.0.hostname }}
+
+[dnsmasq:vars]
+esxi_iso_path={{ esxi_iso_path }}
+{% if dnsmasq_syslinux_url %}
+dnsmasq_syslinux_url={{ dnsmasq_syslinux_url }}
+{% endif %}
+
+[nfsserver]
+{{ infra_servers.1.hostname }}
+
+{% if network_vlan_interface is defined %}
+[nfsserver:vars]
+network_vlan_interface={{ network_vlan_interface }}
+{% endif %}
+
+[iscsi]
+{{ infra_servers.2.hostname }}
+
+[remotedesktop]
+{{ rdp_servers.0.hostname }}
+
+[remotedesktop:vars]
+ansible_shell_type={{ windows_shell_type }}
+shell_type={{ windows_shell_type }}
+ansible_user={{ windows_administrator }}
+ansible_password={{ default_lab_password }}
+vmware_remote_console_zip_path={{ vmware_remote_console_zip_path }}
+{% if firefox_download_url is defined %}
+firefox_download_url={{ firefox_download_url }}
+{% endif %}
+{% if putty_download_url is defined %}
+putty_download_url={{ putty_download_url }}
+{% endif %}
+
+[infraserver:children]
+dnsmasq
+nfsserver
+iscsi
+
+[infraserver:vars]
+ansible_ssh_user={{ linux_root }}
+ansible_ssh_pass={{ linux_template_password }}
+{% if ol8_baseos_latest_repo_url is defined %}
+ol8_baseos_latest_repo_url={{ ol8_baseos_latest_repo_url }}
+{% endif %}
+{% if ol8_appstream_repo_url is defined %}
+ol8_appstream_repo_url={{ ol8_appstream_repo_url }}
+{% endif %}
+
+[dnsmasqclients:children]
+nfsserver
+iscsi
+
+[deployvcenter:children]
+dnsmasq
+
+[deployvcenter:vars]
+ovftool_bundle_path={{ ovftool_bundle_path }}
+vcsa_iso_path={{ vcsa_iso_path }}
+
+[vcenter]
+localhost
+
+[vcenter:vars]
+datacenter_name={{ datacenter_name }}
+vcenter_hostname={{ vcenter_hostname }}
+cluster_name={{ cluster_name }}
+datastore_name={{ datastore_name }}
+dpg_provision_name={{ dpg_provision_name }}
+dpg_external_name={{ dpg_external_name }}
+
+[vyos]
+# dynamically configured
+
+[vyos:vars]
+ansible_connection={{ vyos_connection }}
+ansible_network_os={{ vyos_network_os }}
+ansible_ssh_user={{ vyos_user }}
+ansible_ssh_pass={{ vyos_password }}
+
+[all:vars]
+present_lab_id={{ lab_id }}
+external_ip={{ external_ip }}
+external_cidr={{ external_cidr }}
+external_gateway={{ external_gateway }}
+route_networks={{ route_networks }}
+ntp_servers_list={{ ntp_servers_list }}
+dns_servers_list={{ dns_servers_list }}
+# set vyos provision ip to accelerate provisioning in case of failure
+#vyos_provision_ip=

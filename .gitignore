@@ -4,3 +4,4 @@ hosts-lab*
 !group_vars/all.yml
 group_vars/*.yml
 test*.yml
+inventories/hosts*

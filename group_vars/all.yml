@@ -1,18 +1,25 @@
 ---
 # common vars
+
+# lab variables
 lab_domain: vsphere.lab
 
 lab_id: "{{ present_lab_id|default(1) }}"
 lab_padded_id: "{{ '%02d'|format(lab_id|int) }}"
 
-esxi_mac_seed: "00:50:56:3F:{{ lab_padded_id }}:"
-
-management_network_gateway: 172.16.100.1
-global_mtu: 9000
+esxi_mac_seed: "00:50:56:3E:{{ lab_padded_id }}:"
 
 # password used throughout the lab
 default_lab_password: VMware1!
 
+# network variables
+management_network_gateway: 172.16.100.1
+global_mtu: 9000
+
+dns_servers: "{{ dns_servers_list.split() | default(omit)}}"
+
+ntp_servers: "{{ ntp_servers_list.split() | default(omit) }}"
+  
 vlans:
   - vlan_id: 2001
     gateway_ip: 172.16.201.1
@@ -51,6 +58,7 @@ vlans:
     mask: 24
     description: VLAN for NSX-T Edge Node Right Uplink
 
+# lab virtual machines
 vyos_server:
   name: "vsphere-lab{{ lab_padded_id }}-vyos"
   num_cpus: 2
@@ -76,6 +84,7 @@ infra_servers:
     memory_gb: 1 
     disk: []
     initial_powerstate: powered-on
+    external_port: 11022
   - name: "vsphere-lab{{ lab_padded_id }}-nfsserver"
     hostname: nfsserver01
     ip: 172.16.100.12
@@ -89,17 +98,33 @@ infra_servers:
       - size_gb: 500
         type: thin
     initial_powerstate: powered-on
+    external_port: 12022
+  - name: "vsphere-lab{{ lab_padded_id }}-iscsiserver"
+    hostname: iscsi01
+    ip: 172.16.100.13
+    netmask: 255.255.255.0
+    prefix: 24
+    num_cpus: 2
+    memory_gb: 2 
+    disk:
+      - size_gb: 20
+        type: thin
+      - size_gb: 500
+        type: thin
+    initial_powerstate: powered-on
+    external_port: 13022
 
 rdp_servers:
   - name: "vsphere-lab{{ lab_padded_id }}-rdp"
     hostname: rdp01
-    ip: 172.16.100.13
+    ip: 172.16.100.21
     netmask: 255.255.255.0
     prefix: 24
     num_cpus: 2
     memory_gb: 8
     disk: []
     initial_powerstate: powered-on
+    external_port: 21022
 
 esxi_servers:
   - name: "vsphere-lab{{ lab_padded_id }}-esxi01"
@@ -153,14 +178,7 @@ esxi_servers:
     memory_gb: 16 
     initial_powerstate: powered-off
 
-dns_servers:
-  - 10.0.3.194
-  - 10.0.3.148
-
-ntp_servers:
-  - 10.0.11.163
-  - 10.0.11.164
-
+# nfs service
 nfs_server:
   ip: 172.16.202.12
   vlan: 2002
@@ -182,6 +200,9 @@ nfs_exports:
   export_size_gb: 100
   client_network: 172.16.202.0/24
 
+#
+# ESXi variables
+#
 # name of the local port group used for vCenter deployment
 pg_management_name: pgManagement
 
@@ -192,5 +213,24 @@ esxi_root: root
 local_datastore_prefix: local_
 
 # esxi01 external ports
-esxi01_ssh_port: 11022
 esxi01_https_port: 11443
+
+#
+# Windows variables
+#
+windows_administrator: administrator
+windows_shell_type: cmd
+
+#
+# Linux variables
+#
+linux_root: root
+linux_template_password: template
+
+#
+# Vyos variables
+#
+vyos_connection: network_cli
+vyos_network_os: vyos
+vyos_user: vyos
+vyos_password: laboratory

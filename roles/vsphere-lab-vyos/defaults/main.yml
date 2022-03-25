@@ -26,22 +26,38 @@ vyos_external_networks: "{{ route_networks.split(',') }}"
 
 vyos_nat_rules:
   destination:
-    - description: "Port Forward: SSH to Infra Server 1 {{ infra_servers.0.ip }}"
+    - description: "Port Forward: SSH to Infra Server {{ infra_servers.0.hostname }} {{ infra_servers.0.ip }}"
       destination: 
-        port: "{{ esxi01_ssh_port }}"
+        port: "{{ infra_servers.0.external_port }}"
       inbound_interface: eth1
       protocol: tcp
       translation:
         address: "{{ infra_servers.0.ip }}"
         port: 22
-    # - description: "Port Forward: SSH to Infra Server 2 {{ infra_servers.1.ip }}"
-    #   destination: 
-    #     port: 12022
-    #   inbound_interface: eth1
-    #   protocol: tcp
-    #   translation:
-    #     address: "{{ infra_servers.1.ip }}"
-    #     port: 22
+    - description: "Port Forward: SSH to Infra Server {{ infra_servers.1.hostname }} {{ infra_servers.1.ip }}"
+      destination: 
+        port: "{{ infra_servers.1.external_port }}"
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ infra_servers.1.ip }}"
+        port: 22
+    - description: "Port Forward: SSH to Infra Server {{ infra_servers.2.hostname }} {{ infra_servers.2.ip }}"
+      destination: 
+        port: "{{ infra_servers.2.external_port }}"
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ infra_servers.2.ip }}"
+        port: 22
+    - description: "Port Forward: SSH to Remote Desktop Server {{ rdp_servers.0.hostname }} {{ rdp_servers.0.ip }}"
+      destination: 
+        port: "{{ rdp_servers.0.external_port }}"
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ rdp_servers.0.ip }}"
+        port: 22
     - description: "Port Forward: esxi server 1 HTTPS {{ esxi_servers.0.ip }}"
       destination: 
         port: "{{ esxi01_https_port }}"
