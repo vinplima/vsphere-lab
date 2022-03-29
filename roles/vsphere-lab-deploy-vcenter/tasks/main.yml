@@ -13,7 +13,7 @@
 
 # deploy vcenter
 - name: Check if vcenter was deployed
-  shell: "ovftool vi://root:'{{ default_lab_password }}'@{{ esxi_servers.0.hostname }} | grep vcenter > /dev/null 2>&1"
+  shell: "ovftool --noSSLVerify vi://root:'{{ default_lab_password }}'@{{ esxi_servers.0.hostname }} | grep vcenter > /dev/null 2>&1"
   register: vcenter_deployed
   ignore_errors: yes
 

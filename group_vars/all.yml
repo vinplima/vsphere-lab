@@ -16,9 +16,9 @@ default_lab_password: VMware1!
 management_network_gateway: 172.16.100.1
 global_mtu: 9000
 
-dns_servers: "{{ dns_servers_list.split() | default(omit)}}"
+dns_servers: "{{ dns_servers_list.split(',') | default(omit)}}"
 
-ntp_servers: "{{ ntp_servers_list.split() | default(omit) }}"
+ntp_servers: "{{ ntp_servers_list.split(',') | default(omit) }}"
   
 vlans:
   - vlan_id: 2001

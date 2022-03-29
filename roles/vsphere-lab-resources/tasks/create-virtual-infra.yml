@@ -6,7 +6,7 @@
     username: "{{ vcenter_credentials.username }}"
     password: "{{ vcenter_credentials.password }}"
     validate_certs: "{{ validate_certs }}"
-    folder: "{{ root_folder_path }}"
+    folder: "{{ lab_network_folder_full_path }}"
     switch_name: "{{ vds_name }}"
     switch_version: "{{ vds_version }}"
     mtu: "{{ vds_mtu }}"
@@ -55,17 +55,6 @@
   with_items: "{{ cluster_info.clusters[cluster_name].hosts }}"
   delegate_to: localhost
 
-- name: Add host to vDS
-  community.vmware.vmware_dvs_host:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_credentials.username }}"
-    password: "{{ vcenter_credentials.password }}"
-    validate_certs: "{{ validate_certs }}"
-    esxi_hostname: "{{ esxi_hostname }}"
-    switch_name: "{{ vds_name }}"
-    state: "{{ infra_state }}"
-  delegate_to: localhost
-
 - name: Add lab resource pool to vCenter
   community.vmware.vmware_resource_pool:
     hostname: '{{ vcenter_hostname }}'
@@ -94,7 +83,7 @@
     validate_certs: "{{ validate_certs }}"
     datacenter: "{{ datacenter_name }}"
     state: present
-    folder: "{{ lab_full_path }}"
+    folder: "{{ lab_vm_folder_full_path }}"
     template: "{{ templates.infra_linux }}"
     name: "{{ item.name }}"
     cluster: "{{ cluster_name }}"
@@ -126,7 +115,7 @@
     validate_certs: "{{ validate_certs }}"
     datacenter: "{{ datacenter_name }}"
     state: present
-    folder: "{{ lab_full_path }}"
+    folder: "{{ lab_vm_folder_full_path }}"
     template: "{{ templates.windows }}"
     name: "{{ item.name }}"
     cluster: "{{ cluster_name }}"
@@ -141,10 +130,11 @@
         ip: "{{ item.ip }}"
         netmask: "{{ item.netmask }}"
         gateway: "{{ management_network_gateway }}"
+        connected: True
     wait_for_ip_address: True
     wait_for_ip_address_timeout: 600
     customization:
-      dns_servers: "{{ dns_servers }}"
+      dns_servers: "{{ infra_servers.0.ip }}"
       hostname: "{{ item.hostname }}"
       password: "{{ default_lab_password }}"
   delegate_to: localhost
@@ -160,7 +150,7 @@
     validate_certs: "{{ validate_certs }}"
     datacenter: "{{ datacenter_name }}"
     state: poweredoff
-    folder: "{{ lab_full_path }}"
+    folder: "{{ lab_vm_folder_full_path }}"
     template: "{{ templates.nested_esxi }}"
     name: "{{ item.name }}"
     cluster: "{{ cluster_name }}"
@@ -205,7 +195,7 @@
     validate_certs: "{{ validate_certs }}"
     datacenter: "{{ datacenter_name }}"
     state: poweredoff
-    folder: "{{ lab_full_path }}"
+    folder: "{{ lab_vm_folder_full_path }}"
     template: "{{ templates.vyos_vm }}"
     name: "{{ vyos_server.name }}"
     cluster: "{{ cluster_name }}"

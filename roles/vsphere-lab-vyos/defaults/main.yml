@@ -24,6 +24,7 @@ vyos_vlan_interface: eth2
 
 vyos_external_networks: "{{ route_networks.split(',') }}"
 
+# TODO improve NAT rules creations logic (too hardcoded)
 vyos_nat_rules:
   destination:
     - description: "Port Forward: SSH to Infra Server {{ infra_servers.0.hostname }} {{ infra_servers.0.ip }}"
@@ -60,44 +61,44 @@ vyos_nat_rules:
         port: 22
     - description: "Port Forward: esxi server 1 HTTPS {{ esxi_servers.0.ip }}"
       destination: 
-        port: "{{ esxi01_https_port }}"
+        port: 11443
       inbound_interface: eth1
       protocol: tcp
       translation:
         address: "{{ esxi_servers.0.ip }}"
         port: 443
-    # - description: "Port Forward: esxi server 2 HTTPS {{ esxi_servers.1.ip }}"
-    #   destination: 
-    #     port: 12443
-    #   inbound_interface: eth1
-    #   protocol: tcp
-    #   translation:
-    #     address: "{{ esxi_servers.1.ip }}"
-    #     port: 443
-    # - description: "Port Forward: esxi server 3 HTTPS {{ esxi_servers.2.ip }}"
-    #   destination: 
-    #     port: 13443
-    #   inbound_interface: eth1
-    #   protocol: tcp
-    #   translation:
-    #     address: "{{ esxi_servers.2.ip }}"
-    #     port: 443
-    # - description: "Port Forward: esxi server 4 HTTPS {{ esxi_servers.3.ip }}"
-    #   destination: 
-    #     port: 14443
-    #   inbound_interface: eth1
-    #   protocol: tcp
-    #   translation:
-    #     address: "{{ esxi_servers.3.ip }}"
-    #     port: 443
-    # - description: "Port Forward: esxi server 5 HTTPS {{ esxi_servers.4.ip }}"
-    #   destination: 
-    #     port: 15443
-    #   inbound_interface: eth1
-    #   protocol: tcp
-    #   translation:
-    #     address: "{{ esxi_servers.4.ip }}"
-    #     port: 443
+    - description: "Port Forward: esxi server 2 HTTPS {{ esxi_servers.1.ip }}"
+      destination: 
+        port: 12443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.1.ip }}"
+        port: 443
+    - description: "Port Forward: esxi server 3 HTTPS {{ esxi_servers.2.ip }}"
+      destination: 
+        port: 13443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.2.ip }}"
+        port: 443
+    - description: "Port Forward: esxi server 4 HTTPS {{ esxi_servers.3.ip }}"
+      destination: 
+        port: 14443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.3.ip }}"
+        port: 443
+    - description: "Port Forward: esxi server 5 HTTPS {{ esxi_servers.4.ip }}"
+      destination: 
+        port: 15443
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ esxi_servers.4.ip }}"
+        port: 443
     - description: "Port Forward: vcenter server HTTPS {{ vcenter_server.ip }}"
       destination: 
         port: 443

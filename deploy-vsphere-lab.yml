@@ -75,7 +75,7 @@
 
 # configures dns in others servers
 - name: Configures DNS in others infra servers
-  hosts: dnsmasq_clients
+  hosts: dnsmasqclients
   gather_facts: true
   
   tasks: 
@@ -142,8 +142,18 @@
 # Installs vCenter Server
 #
 - name: Deploy vcenter appliance
-  hosts: deploy-vcenter
+  hosts: deployvcenter
   gather_facts: true
 
   roles:
     - roles/vsphere-lab-deploy-vcenter
+
+#
+# Configures remote desktop
+#
+- name: Configure remote desktop
+  hosts: remotedesktop
+  gather_facts: false
+
+  roles:
+    - roles/vsphere-lab-prepare-remote-desktop

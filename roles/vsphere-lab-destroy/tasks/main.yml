@@ -1,0 +1,141 @@
+---
+# tasks file for roles/vsphere-lab-destroy
+
+#
+# virtual machines
+#
+
+# delete virtual machines
+- name: Gather all VMs in lab folder
+  community.vmware.vmware_vm_info:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    folder: "{{ lab_vm_folder_full_path }}"
+  delegate_to: localhost
+  register: vm_info
+
+- name: Remove lab virtual machines
+  community.vmware.vmware_guest:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    name: "{{ item }}"
+    delete_from_inventory: False
+    force: True
+    state: absent
+  delegate_to: localhost
+  with_items: "{{ vm_info.virtual_machines | map(attribute='guest_name') | list }}"
+
+
+# delete vm folder
+- name: Remove present lab VM folder
+  community.vmware.vcenter_folder:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    datacenter_name: "{{ datacenter_name }}"
+    parent_folder: "{{ root_folder_name }}" 
+    folder_name: "{{ lab_vm_folder_name }}"
+    folder_type: vm
+    state: absent
+  delegate_to: localhost
+
+# delete base folder, if no subfolder left
+- name: Remove lab VM root folder
+  community.vmware.vcenter_folder:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    datacenter_name: "{{ datacenter_name }}"
+    folder_name: "{{ root_folder_name }}"
+    folder_type: vm
+    state: absent
+  delegate_to: localhost
+  ignore_errors: yes
+
+#
+# clusters
+#
+
+# delete resource pool
+- name: Remove lab resource pool to vCenter
+  community.vmware.vmware_resource_pool:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    datacenter: "{{ datacenter_name }}"
+    cluster: "{{ cluster_name }}"
+    resource_pool: "{{ resource_pool_name }}"
+    state: absent
+  delegate_to: localhost
+
+# delete affinity rule
+- name: Remove affinity rule
+  community.vmware.vmware_vm_vm_drs_rule:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    cluster_name: "{{ cluster_name }}"
+    drs_rule_name: "{{ drs_affinity_rule }}"
+    state: absent
+  delegate_to: localhost
+
+#
+# network
+#
+
+# remove vds from hosts
+- name: Gather cluster {{ cluster_name }} info
+  community.vmware.vmware_cluster_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    cluster_name: "{{ cluster_name }}"
+  delegate_to: localhost
+  register: cluster_info
+
+- name: Remove each cluster {{ cluster_name }} host from vDS {{ vds_name }} with no uplinks
+  community.vmware.vmware_dvs_host:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    esxi_hostname: "{{ item.name }}"
+    switch_name: "{{ vds_name }}"
+    state: absent
+  with_items: "{{ cluster_info.clusters[cluster_name].hosts }}"
+  delegate_to: localhost
+
+# delete vds
+- name: Remove Lab Virtual Distributed Switch
+  community.vmware.vmware_dvswitch:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    folder: "{{ lab_network_folder_full_path }}"
+    switch_name: "{{ vds_name }}"
+    state: absent
+  delegate_to: localhost
+
+# delete base folder, if no vds left
+- name: Remove lab network folder
+  community.vmware.vcenter_folder:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    datacenter_name: "{{ datacenter_name }}"
+    folder_name: "{{ root_folder_name }}"
+    folder_type: network
+    state: absent
+  delegate_to: localhost
+  ignore_errors: yes

@@ -1,0 +1,20 @@
+---
+#
+# 
+#
+- name: Clean lab infra in vCenter
+  hosts: vcenter
+  connection: local
+  gather_facts: true
+
+  collections:
+    - community.vmware
+
+  pre_tasks:
+    - include_vars:
+        dir: credentials
+        ignore_files: 
+          - README.md
+
+  roles:
+    - roles/vsphere-lab-destroy

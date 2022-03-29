@@ -22,6 +22,7 @@ dpg_provision_name: dpgProvision
 dpg_external_name: dpgExternal
 
 root_folder_name: VSPHERE-LAB
+lab_network_folder_full_path: "/{{ datacenter_name}}/network/{{ root_folder_name }}"
 lab_vm_folder_name: "LAB{{ lab_padded_id }}"
 lab_vm_folder_full_path: "/{{ datacenter_name}}/vm/{{ root_folder_name }}/{{ lab_vm_folder_name }}"
 

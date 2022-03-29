@@ -7,7 +7,7 @@
             "username": "root",
             "password": "{{ default_lab_password }}",
             "deployment_network": "{{ pg_management_name }}",
-            "datastore": "{{ nfs_exports.datastores.0 }}"
+            "datastore": "{{ local_datastore_prefix }}{{ esxi_servers.0.hostname }}"
         },
         "appliance": {
             "__comments": [

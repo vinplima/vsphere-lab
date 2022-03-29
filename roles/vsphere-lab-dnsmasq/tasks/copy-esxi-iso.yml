@@ -22,7 +22,7 @@
 
 - name: Unmount esxi iso
   mount:
-    src: "{{ esxi_iso.path }}"
+    src: "{{ esxi_iso.dest }}"
     path: /mnt
     opts: ro
     state: unmounted
@@ -30,5 +30,5 @@
 
 - name: Remove iso file
   file: 
-    path: "{{ esxi_iso.path }}"
+    path: "{{ esxi_iso.dest }}"
     state: absent

@@ -2,3 +2,7 @@
 collections:
   - name: community.vmware
     version: 1.17.0
+
+roles:
+  - name: ahuffman.resolv
+  - name: mrlesmithjr.nfs-server
