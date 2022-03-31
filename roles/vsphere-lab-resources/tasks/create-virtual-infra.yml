@@ -130,11 +130,13 @@
         ip: "{{ item.ip }}"
         netmask: "{{ item.netmask }}"
         gateway: "{{ management_network_gateway }}"
+        dns_servers: "{{ infra_servers.0.ip }}"
+        domain: "{{ lab_domain }}"
         connected: True
+        start_connected: True
     wait_for_ip_address: True
     wait_for_ip_address_timeout: 600
     customization:
-      dns_servers: "{{ infra_servers.0.ip }}"
       hostname: "{{ item.hostname }}"
       password: "{{ default_lab_password }}"
   delegate_to: localhost

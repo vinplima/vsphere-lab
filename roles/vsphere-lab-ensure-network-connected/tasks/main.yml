@@ -1,0 +1,24 @@
+---
+# tasks file for roles/vsphere-lab-ensure-network-connected
+- name: Gather VM {{ vm_name }} info
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_credentials.username }}"
+    password: "{{ vcenter_credentials.password }}"
+    validate_certs: "{{ validate_certs }}"
+    datacenter: "{{ datacenter_name }}"
+    name: "{{ vm_name }}"
+  register: vm_info
+
+- name: Ensure network adapter is connected
+  community.vmware.vmware_guest_network:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_credentials.username }}'
+    password: '{{ vcenter_credentials.password }}'
+    validate_certs: "{{ validate_certs }}"
+    datacenter: "{{ datacenter_name }}"
+    name: "{{ vm_name }}"
+    mac_address: "{{ vm_info.instance.hw_eth0.macaddress }}"
+    network_name: "{{ vds_dpg_name }}"
+    connected: True
+  delegate_to: localhost

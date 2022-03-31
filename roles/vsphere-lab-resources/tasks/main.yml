@@ -70,7 +70,7 @@
     name: "{{ item.name }}"
     state: "{{ item.initial_powerstate }}"
   delegate_to: localhost
-  with_items: "{{ [vyos_server] + esxi_servers + infra_servers }}"
+  with_items: "{{ [vyos_server] + esxi_servers + infra_servers + rdp_servers }}"
 
 - name: Sleeps while VMs are starting 
   wait_for: 

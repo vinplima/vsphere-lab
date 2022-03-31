@@ -24,11 +24,6 @@ dnsmasq_syslinux_url={{ dnsmasq_syslinux_url }}
 [nfsserver]
 {{ infra_servers.1.hostname }}
 
-{% if network_vlan_interface is defined %}
-[nfsserver:vars]
-network_vlan_interface={{ network_vlan_interface }}
-{% endif %}
-
 [iscsi]
 {{ infra_servers.2.hostname }}
 
@@ -102,5 +97,6 @@ external_gateway={{ external_gateway }}
 route_networks={{ route_networks }}
 ntp_servers_list={{ ntp_servers_list }}
 dns_servers_list={{ dns_servers_list }}
+network_vlan_interface={{ network_vlan_interface | default('ens192') }}
 # set vyos provision ip to accelerate provisioning in case of failure
 #vyos_provision_ip=

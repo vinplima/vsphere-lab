@@ -25,6 +25,15 @@
   roles:
     - roles/vsphere-lab-resources
 
+  tasks:
+
+    - name: Ensure VMs network is connected
+      include_role: 
+        name: roles/vsphere-lab-ensure-network-connected
+      with_items: "{{ infra_servers + rdp_servers }}"
+      vars: 
+        vm_name: "{{ item.name }}"
+
 #
 # Configures inventory with vyos IP
 #
@@ -73,6 +82,14 @@
   roles:
     - roles/vsphere-lab-dnsmasq
 
+# configures nfs server VLAN
+- name: provision nfs server VLAN
+  hosts: nfsserver
+  gather_facts: true
+
+  roles:
+    - roles/vsphere-lab-init-nfs-network
+
 # configures dns in others servers
 - name: Configures DNS in others infra servers
   hosts: dnsmasqclients
@@ -81,7 +98,7 @@
   tasks: 
     - name: Remove old DNS from network interfaces
       lineinfile:
-        path: /etc/sysconfig/network-scripts/ifcfg-ens192
+        path: "/etc/sysconfig/network-scripts/ifcfg-{{ network_vlan_interface }}"
         state: absent
         regexp: '^DNS'
 
@@ -101,7 +118,6 @@
   roles:
     - roles/vsphere-lab-init-nfs-vars
     - roles/vsphere-lab-init-nfs-fs
-    - roles/vsphere-lab-init-nfs-network
     - role: mrlesmithjr.nfs-server
 
 #

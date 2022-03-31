@@ -1,0 +1,4 @@
+---
+# defaults file for roles/vsphere-lab-ensure-network-connected
+validate_certs: false
+vds_dpg_name: "dpgVsphereLab{{ lab_padded_id }}"
