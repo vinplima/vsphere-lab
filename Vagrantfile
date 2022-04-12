@@ -9,7 +9,8 @@ DOMAIN = 'vsphere.lab'
 VYOS01_INTERNAL_IP = "172.16.100.101" # configured as .1 by ansible
 DNSMASQ01_INTERNAL_IP = "172.16.100.11"
 NFS01_INTERNAL_IP = "172.16.100.12"
-REMOTEDESKTOP01_INTERNAL_IP = "172.16.100.13"
+ISCSI01_INTERNAL_IP = "172.16.100.13"
+REMOTEDESKTOP01_INTERNAL_IP = "172.16.100.21"
 
 # PUBLIC NETWORK - 192.168.0.0/24
 VYOS01_PUBLIC_IP = "192.168.0.101"
@@ -18,6 +19,12 @@ VYOS01_PUBLIC_IP = "192.168.0.101"
 $script_route = <<-SCRIPT
 route add default gw 172.16.100.1
 eval `route -n | awk '{ if ($8 =="eth0" && $2 != "0.0.0.0") print "route del default gw " $2; }'`
+SCRIPT
+
+# CONFIGURES LVM2
+$script_lvm2 = <<-SCRIPT
+yum -y update
+yum -y install lvm2
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -75,6 +82,29 @@ Vagrant.configure("2") do |config|
     # nfs01.vm.provision "shell", run: "always", inline: $script_route
 
     nfs01.vm.provider "virtualbox" do |v|
+      v.memory = "1024"
+      v.cpus = "1"
+      v.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
+    end
+  end
+
+  config.vm.define 'iscsi01' do |iscsi01|
+    
+    iscsi01.vm.box = "oraclebase/oracle-8"
+
+    iscsi01.vm.host_name = "iscsi01." + DOMAIN
+
+    iscsi01.vm.network "private_network", ip: ISCSI01_INTERNAL_IP, auto_config: true
+    
+    iscsi01.vm.disk :disk, name: "iscsi", size: "500GB"
+
+    iscsi01.vm.synced_folder ".", "/vagrant", disabled: true
+
+    iscsi01.vm.provision "shell", inline: $script_lvm2
+
+    # iscsi01.vm.provision "shell", run: "always", inline: $script_route
+
+    iscsi01.vm.provider "virtualbox" do |v|
       v.memory = "1024"
       v.cpus = "1"
       v.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]

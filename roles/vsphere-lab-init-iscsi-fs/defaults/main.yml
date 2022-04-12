@@ -1,0 +1,3 @@
+---
+# defaults file for roles/vsphere-lab-init-iscsi-fs
+device_path: /dev/sdb

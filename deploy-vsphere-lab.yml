@@ -83,12 +83,19 @@
     - roles/vsphere-lab-dnsmasq
 
 # configures nfs server VLAN
-- name: provision nfs server VLAN
+- name: Provision nfs server VLAN
   hosts: nfsserver
   gather_facts: true
 
   roles:
     - roles/vsphere-lab-init-nfs-network
+
+- name: Provision iSCSI server VLAN
+  hosts: iscsi
+  gather_facts: true
+
+  roles:
+    - roles/vsphere-lab-init-iscsi-network
 
 # configures dns in others servers
 - name: Configures DNS in others infra servers
@@ -119,6 +126,18 @@
     - roles/vsphere-lab-init-nfs-vars
     - roles/vsphere-lab-init-nfs-fs
     - role: mrlesmithjr.nfs-server
+
+# configures iscsi server and volumes
+- name: Configure iSCSI server volumes
+  hosts: iscsi
+  gather_facts: true
+
+  roles:
+    - roles/vsphere-lab-init-iscsi-vars
+    - roles/vsphere-lab-init-iscsi-fs
+    - role: ondrejhome.targetcli
+  vars:
+    ansible_distribution: CentOS
 
 #
 # Kickstarts ESXi servers

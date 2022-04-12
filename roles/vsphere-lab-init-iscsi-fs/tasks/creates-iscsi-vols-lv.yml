@@ -1,0 +1,6 @@
+---
+- name: Creates vol LV {{ lv_name }}
+  community.general.lvol:
+    vg: "{{ iscsi_vols.vg_name }}"
+    lv: "{{ lv_name }}"
+    size: "{{ iscsi_vols.size_gb }}g"

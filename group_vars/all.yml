@@ -200,6 +200,19 @@ nfs_exports:
   export_size_gb: 100
   client_network: 172.16.202.0/24
 
+# iscsi service
+iscsi_server:
+  ip: 172.16.203.13
+  vlan: 2003
+  prefix: 24
+  netmask: 255.255.255.0
+  name: iscsi
+
+iscsi_vols:
+  size_gb: 100
+  quantity: 4
+  vg_name: vg_iscsi
+
 #
 # ESXi variables
 #

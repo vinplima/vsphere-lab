@@ -1,0 +1,18 @@
+---
+# tasks file for roles/vsphere-lab-init-iscsi-fs
+- name: Creates partition for LVM
+  community.general.parted:
+    device: "{{ device_path }}"
+    number: 1
+    state: present
+
+- name: Creates LVM VG
+  community.general.lvg:
+    vg: "{{ iscsi_vols.vg_name }}"
+    pvs: "{{ device_path }}1"
+
+- name: Creates LVs
+  include_tasks: creates-iscsi-vols-lv.yml
+  loop: "{{ range(1, iscsi_vols.quantity + 1) | list }}"
+  vars: 
+    lv_name: "vol{{ item }}"

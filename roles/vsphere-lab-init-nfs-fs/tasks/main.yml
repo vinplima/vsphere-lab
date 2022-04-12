@@ -5,7 +5,6 @@
     device: "{{ device_path }}"
     number: 1
     state: present
-  register: partition_info
 
 - name: Creates LVM VG
   community.general.lvg:
