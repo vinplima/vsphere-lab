@@ -238,7 +238,6 @@ windows_shell_type: cmd
 # Linux variables
 #
 linux_root: root
-linux_template_password: template
 
 #
 # Vyos variables

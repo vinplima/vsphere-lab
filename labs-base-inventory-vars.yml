@@ -35,6 +35,11 @@ ovftool_bundle_path:
 # Remote Console zip path
 vmware_remote_console_zip_path:
 
+# OVF zips and ISO files
+ovf_template_windows_zip_path: 
+ovf_template_linux_zip_path: 
+iso_so_linux_path: 
+
 #
 # vcenter server variables (enviroment to be used)
 #

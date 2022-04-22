@@ -64,6 +64,15 @@
     path: "{{ remote_console_exe.files.0.path }}"
     arguments: /s /v "/qn EULAS_AGREED=1 AUTOSOFTWAREUPDATE=0 DATACOLLECTION=0"
 
+- name: Copy files for laboratory activities
+  win_copy:
+    src: "{{ item }}"
+    dest: "{{ tmp_directory }}/"
+  with_items:
+    - "{{ ovf_template_windows_zip_path }}"
+    - "{{ ovf_template_linux_zip_path }}"
+    - "{{ iso_so_linux_path }}"
+
 - name: Reboot windows server
   win_reboot:
     reboot_timeout: 600

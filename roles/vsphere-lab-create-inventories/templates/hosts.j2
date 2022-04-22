@@ -42,6 +42,9 @@ firefox_download_url={{ firefox_download_url }}
 {% if putty_download_url is defined %}
 putty_download_url={{ putty_download_url }}
 {% endif %}
+ovf_template_windows_zip_path={{ ovf_template_windows_zip_path }}
+ovf_template_linux_zip_path={{ ovf_template_linux_zip_path }}
+iso_so_linux_path={{ iso_so_linux_path }}
 
 [infraserver:children]
 dnsmasq
@@ -50,7 +53,7 @@ iscsi
 
 [infraserver:vars]
 ansible_ssh_user={{ linux_root }}
-ansible_ssh_pass={{ linux_template_password }}
+ansible_ssh_pass={{ default_lab_password }}
 {% if ol8_baseos_latest_repo_url is defined %}
 ol8_baseos_latest_repo_url={{ ol8_baseos_latest_repo_url }}
 {% endif %}

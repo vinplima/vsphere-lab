@@ -9,3 +9,8 @@ putty_download_url: https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-
 tmp_directory: C:\Temp
 
 #vmware_remote_console_zip_path: 
+
+#ovf_template_windows_zip_path:
+#ovf_template_linux_zip_path:
+
+#iso_so_linux_path:

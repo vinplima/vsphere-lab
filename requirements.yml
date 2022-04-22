@@ -6,3 +6,4 @@ collections:
 roles:
   - name: ahuffman.resolv
   - name: mrlesmithjr.nfs-server
+  - name: ondrejhome.targetcli
