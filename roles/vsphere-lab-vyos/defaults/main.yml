@@ -24,6 +24,8 @@ vyos_vlan_interface: eth2
 
 vyos_external_networks: "{{ route_networks.split(',') }}"
 
+vyos_dhcp_networks: []
+
 # TODO improve NAT rules creations logic (too hardcoded)
 vyos_nat_rules:
   destination:

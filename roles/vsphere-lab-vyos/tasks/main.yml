@@ -81,6 +81,16 @@
   loop_control: 
     index_var: idx 
 
+- name: Configure dhcp server
+  vyos.vyos.vyos_config:
+    lines:
+      - "set service dhcp-server shared-network-name {{ item.name }} subnet {{ item.network }} default-router {{ item.gateway }}"
+      - "set service dhcp-server shared-network-name {{ item.name }} subnet {{ item.network }} dns-server {{ item.name_server }}"
+      - "set service dhcp-server shared-network-name {{ item.name }} subnet {{ item.network }} domain-name {{ item.domain_name }}"
+      - "set service dhcp-server shared-network-name {{ item.name }} subnet {{ item.network }} range 0 start {{ item.range.start }}"
+      - "set service dhcp-server shared-network-name {{ item.name }} subnet {{ item.network }} range 0 stop {{ item.range.end }}"
+  with_items: "{{ vyos_dhcp_networks }}"
+
 - name: Save configurations
   vyos.vyos.vyos_config:
     save: "{{ vyos_save_configuration }}"

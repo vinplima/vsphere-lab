@@ -36,27 +36,46 @@ vlans:
   - vlan_id: 2004
     gateway_ip: 172.16.204.1
     mask: 24
-    description: VLAN for App Network
+    description: VLAN for Fault Tolerance
   - vlan_id: 2005
     gateway_ip: 172.16.205.1
     mask: 24
-    description: VLAN for Database Network
+    description: VLAN for App Network
   - vlan_id: 2006
     gateway_ip: 172.16.206.1
     mask: 24
-    description: VLAN for NSX-T Transport Node Overlay
+    description: VLAN for Database Network
   - vlan_id: 2007
     gateway_ip: 172.16.207.1
     mask: 24
-    description: VLAN for NSX-T Edge Node Overlay
+    description: VLAN Available 01
   - vlan_id: 2008
     gateway_ip: 172.16.208.1
     mask: 24
-    description: VLAN for NSX-T Edge Node Left Uplink
+    description: VLAN Available 02
   - vlan_id: 2009
     gateway_ip: 172.16.209.1
     mask: 24
-    description: VLAN for NSX-T Edge Node Right Uplink
+    description: VLAN Available 03
+
+vyos_dhcp_networks:
+  - network: 172.16.205.0/24
+    name: APP-NETWORK
+    gateway: 172.16.205.1
+    name_server: 172.16.100.11
+    domain_name: "{{ lab_domain }}"
+    range: 
+      start: 172.16.205.100
+      end: 172.16.205.199
+
+  - network: 172.16.206.0/24
+    name: DB-NETWORK
+    gateway: 172.16.206.1
+    name_server: 172.16.100.11
+    domain_name: "{{ lab_domain }}"
+    range: 
+      start: 172.16.206.100
+      end: 172.16.206.199
 
 # lab virtual machines
 vyos_server:
@@ -74,6 +93,7 @@ vcenter_server:
   ip: 172.16.100.30
   prefix: 24
 
+# ATTENTION - do not change infra servers order
 infra_servers:
   - name: "vsphere-lab{{ lab_padded_id }}-dnsmasq"
     hostname: dnsmasq01
