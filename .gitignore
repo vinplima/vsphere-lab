@@ -6,3 +6,5 @@ test*.yml
 inventories/hosts*
 *.vdi
 hosts
+.roles
+.collections
