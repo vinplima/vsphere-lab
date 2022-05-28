@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ansible = "*"
-paramiko = "*"
-pyvmomi = "*"
+ansible = "5.2.0"
+paramiko = "2.9.2"
+pyvmomi = "7.0.3"
 
 [dev-packages]
 
