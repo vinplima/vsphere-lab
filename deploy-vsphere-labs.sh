@@ -1,7 +1,14 @@
 #!/bin/bash
 
+##
+# deploy-vsphere-labs.sh
+#
+# Script to deploy all laboratories using inventory files available in ./inventories directory.
+##
+
+sleep_seconds=1800 # sleeps for 30 minutes between deployments
+
 base_dir="$(dirname $0)"
-sleep_seconds=1800
 playbook_file="deploy-vsphere-lab.yml"
 inventories_dir="inventories"
 

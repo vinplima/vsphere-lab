@@ -6,7 +6,6 @@
 - name: Create labs inventory files
   hosts: localhost
   connection: local
-  gather_facts: true
 
   pre_tasks:
 

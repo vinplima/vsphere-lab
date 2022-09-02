@@ -1,6 +1,6 @@
 ---
 # labs to be created
-lab_count: 20
+lab_count: 
 
 # IP list, one for each lab to be created
 lab_ips:

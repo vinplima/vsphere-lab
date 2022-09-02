@@ -15,6 +15,7 @@
     folder: "{{ lab_vm_folder_full_path }}"
   delegate_to: localhost
   register: vm_info
+  ignore_errors: true
 
 - name: Remove lab virtual machines
   community.vmware.vmware_guest:
@@ -28,6 +29,7 @@
     state: absent
   delegate_to: localhost
   with_items: "{{ vm_info.virtual_machines | map(attribute='guest_name') | list }}"
+  ignore_errors: true
 
 
 # delete vm folder
@@ -43,6 +45,7 @@
     folder_type: vm
     state: absent
   delegate_to: localhost
+  ignore_errors: true
 
 # delete base folder, if no subfolder left
 - name: Remove lab VM root folder
@@ -56,7 +59,7 @@
     folder_type: vm
     state: absent
   delegate_to: localhost
-  ignore_errors: yes
+  ignore_errors: true
 
 #
 # clusters
@@ -138,4 +141,4 @@
     folder_type: network
     state: absent
   delegate_to: localhost
-  ignore_errors: yes
+  ignore_errors: true
