@@ -9,6 +9,7 @@ paramiko = "2.9.2"
 pyvmomi = "7.0.3"
 
 [dev-packages]
+ansible-lint = "*"
 
 [requires]
 python_version = "3.9"

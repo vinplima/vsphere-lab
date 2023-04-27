@@ -281,7 +281,7 @@ The **create-labs-inventories.yml** playbook runs locally and its purpose is to 
 
   * **firefox_download_url:** URL to download Firefox for Windows installer (defaults to https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US)
   
-  * **putty_download_url:** URL to download Putty for Windows installer (defaults to http://repo.rede.tst/msi/putty-64bit-0.76-installer.msi)
+  * **putty_download_url:** URL to download Putty for Windows installer (defaults to https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.76-installer.msi)
 
   * **ol8_baseos_latest_repo_url:** Oracle Linux 8 baseos latest YUM repository URL (defaults to https://yum$ociregion.$ocidomain/repo/OracleLinux/OL8/baseos/latest/$basearch/)
   
@@ -293,9 +293,11 @@ Once each laboratory inventory file is deployed, you may do some local modificat
 
 To fully understand all the variables in *group_vars/all.yml* and in the used roles, please refer to the file or the roles documentation.
 
+---
+
 ## 4. Usage
 
-### 4.1 Importing the templates
+### 4.1 Importing the templates (import templates phase)
 
 Each of the templates downloaded will be stored in a zip file composed of 4 files with the following extensions: mf, ovf, mf and vmdk (except for the nested ESXi VM, which does not have an OS installed). You must import each of these templates using all the files available in the zip file. Remember that you must import each template with the name described in **3.3.1**. Refer to the documentation [Deploy an OVF or OVA Template](https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vm_admin.doc/GUID-17BEDA21-43F6-41F4-8FB2-E01D275FE9B4.html).
 
@@ -303,18 +305,207 @@ When you deploy a OVF template, a virtual machine is created. It will be necessa
 
 ### 4.2 Creating laboratories inventory files (inventory deployment phase)
 
+At this phase, each laboratory inventory file will be created with *create-labs-inventories.yml* playbook. This playbook uses the variables in the template vars file *labs-base-inventory-vars.yml* to create as many inventories files as specified in **lab_count** var.
 
-### 4.3 Creating the laboratories
+To proceed with your inventories files creation, configure the variables in *lab-base-inventory-vars.yml*, or copy them to a new YAML file, and call the playbook using this vars file as parameter (no inventory file needed for this playbook):
 
+```
+ansible-playbook create-labs-inventories.yml -e @labs-base-inventory-vars.yml
+```
+
+As an example, 3 laboratory inventory files will be created with the following configuration for *labs-base-inventory-vars.yml*'s variables:
+
+```
+---
+lab_count: 3
+
+lab_ips: 
+  - 10.0.3.101
+  - 10.0.3.102
+  - 10.0.3.103
+
+external_cidr: 24
+external_gateway: 10.0.3.1
+
+ntp_servers_list: ["10.0.1.11", "10.0.1.12"]
+dns_servers_list: ["10.0.2.11", "10.0.2.12", "10.0.2.13"]
+route_networks: ["0.0.0.0/0"]
+
+# path to my python interpreter in the virtualenv
+ansible_python_interpreter: /home/vinic/.local/share/virtualenvs/vsphere-lab-ZwpNLNrD/bin/python
+
+esxi_iso_path: /tmp/VMware-VMvisor-Installer-7.0U3f-20036589.x86_64.iso
+vcsa_iso_path: /tmp/VMware-VCSA-all-7.0.3-20150588.iso
+ovftool_bundle_path: /tmp/VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle
+vmware_remote_console_zip_path: /tmp/VMware-VMRC-12.0.2-19968993.zip
+ovf_template_windows_zip_path: /tmp/Template-winserver19std-2.zip
+ovf_template_linux_zip_path: /tmp/Template-ol8rhk-lab.zip
+iso_so_linux_path: /tmp/ubuntu-20.04.3-desktop-amd64.iso
+
+# vcenter variables
+datacenter_name: LAB
+vcenter_hostname: vcenter.lab.internal
+cluster_name: CLS_LAB
+datastore_name: DSC_LAB
+
+# port group which will be used to provision vyos
+dpg_provision_name: dpgProvision
+
+# port group which will be used to access the lab
+dpg_external_name: dpgExternal
+
+#
+# optional itens
+#
+dnsmasq_syslinux_url: http://repo.lab.internal/syslinux-3.86.zip
+network_vlan_interface: ens192
+firefox_download_url: http://repo.lab.internal/msi/Firefox%20Setup%2097.0.2.exe
+putty_download_url: http://repo.lab.internal/msi/putty-64bit-0.76-installer.msi
+ol8_baseos_latest_repo_url: http://rpm.lab.internal/pulp/repos/TST/Library/custom/Oracle_Linux_8_x86_64/ol8_baseos_latest/
+ol8_appstream_repo_url: http://rpm.lab.internal/pulp/repos/TST/Library/custom/Oracle_Linux_8_x86_64/ol8_appstream/
+
+```
+
+After executing the *create-labs-inventories.yml* playbook, the following inventory files will be available in inventories dir:
+
+```
+$ ls inventories/
+hosts-vsphere-lab-01  hosts-vsphere-lab-02  hosts-vsphere-lab-03  README.md
+```
+
+In each file, all data necessary to deploy a vSphere LAB will be available, as shown in laboratory 1 inventory file:
+
+```
+#
+# Lab 1 inventory file
+#
+
+localhost ansible_python_interpreter=/home/vinic/.local/share/virtualenvs/vsphere-lab-ZwpNLNrD/bin/python
+
+dnsmasq01 ansible_host=10.0.3.101 ansible_port=11022
+nfsserver01 ansible_host=10.0.3.101 ansible_port=12022
+iscsi01 ansible_host=10.0.3.101 ansible_port=13022
+
+rdp01 ansible_host=10.0.3.101 ansible_port=21022
+
+[dnsmasq]
+dnsmasq01
+
+[dnsmasq:vars]
+esxi_iso_path=/tmp/VMware-VMvisor-Installer-7.0U3f-20036589.x86_64.iso
+dnsmasq_syslinux_url=http://repo.lab.internal/syslinux-3.86.zip
+
+[nfsserver]
+nfsserver01
+
+[iscsi]
+iscsi01
+
+[remotedesktop]
+rdp01
+
+[remotedesktop:vars]
+ansible_shell_type=cmd
+shell_type=cmd
+ansible_user=administrator
+ansible_password=VMware1!
+vmware_remote_console_zip_path=/tmp/VMware-VMRC-12.0.2-19968993.zip
+firefox_download_url=http://repo.lab.internal/msi/Firefox%20Setup%2097.0.2.exe
+putty_download_url=http://repo.lab.internal/msi/putty-64bit-0.76-installer.msi
+ovf_template_windows_zip_path=/tmp/Template-winserver19std-2.zip
+ovf_template_linux_zip_path=/tmp/Template-ol8rhk-lab.zip
+iso_so_linux_path=/tmp/ubuntu-20.04.3-desktop-amd64.iso
+
+[infraserver:children]
+dnsmasq
+nfsserver
+iscsi
+
+[infraserver:vars]
+ansible_ssh_user=root
+ansible_ssh_pass=VMware1!
+ol8_baseos_latest_repo_url=http://rpm.lab.internal/pulp/repos/TST/Library/custom/Oracle_Linux_8_x86_64/ol8_baseos_latest/
+ol8_appstream_repo_url=http://rpm.lab.internal/pulp/repos/TST/Library/custom/Oracle_Linux_8_x86_64/ol8_appstream/
+
+[dnsmasqclients:children]
+nfsserver
+iscsi
+
+[deployvcenter:children]
+dnsmasq
+
+[deployvcenter:vars]
+ovftool_bundle_path=/tmp/VMware-ovftool-4.4.3-18663434-lin.x86_64.bundle
+vcsa_iso_path=/tmp/VMware-VCSA-all-7.0.3-20150588.iso
+
+[vcenter]
+localhost
+
+[vcenter:vars]
+datacenter_name=LAB
+vcenter_hostname=vcenter.lab.internal
+cluster_name=CLS_LAB
+datastore_name=DSC_LAB
+dpg_provision_name=dpgProvision
+dpg_external_name=dpgExternal
+
+[vyos]
+# dynamically configured
+
+[vyos:vars]
+ansible_connection=network_cli
+ansible_network_os=vyos
+ansible_ssh_user=vyos
+ansible_ssh_pass=laboratory
+
+[all:vars]
+present_lab_id=1
+external_ip=10.0.3.101
+external_cidr=24
+external_gateway=10.0.3.1
+route_networks=['0.0.0.0/0']
+ntp_servers_list=['10.0.1.11', '10.0.1.12']
+dns_servers_list=['10.0.2.11', '10.0.2.12', '10.0.2.13']
+network_vlan_interface=ens192
+# set vyos provision ip to accelerate provisioning in case of failure
+#vyos_provision_ip=
+
+```
+
+### 4.3 Creating the laboratories (laboratories deployment phase)
+
+Once created the laboratory inventory file, it is only necessary to run **deploy-vsphere-lab.yml** playbook:
+
+```
+ansible-playbook -i inventories/hosts-vsphere-lab-01 deploy-vsphere-lab.yml
+```
+
+The laboratory deployment may take 2 hours or more, depending on the environment. If 2 or more laboratories must be deployed, the bash script **deploy-vsphere-labs.sh** may be used. It will execute the **deploy-vsphere-lab.yml** for each inventory file created in *inventories* dir, waiting 30 minutes between each execution.
+
+### 4.4 Destroying the laboratories
+
+Destroying each laboratory is as simple as deploying a new laboratory, but takes just a few minutes. To destroy a vSphere Lab, use the **detroy-vsphere-lab.yml** playbook:
+
+```
+ansible-playbook -i inventories/hosts-vsphere-lab-01 destroy-vsphere-lab.yml
+```
+
+---
 
 ## 5. Laboratory Overview
 
 TO-DO
 
+---
+
 ## 6. Authors
 
-TO-DO
+Vinicius Porto Lima - viniciusmaximus@gmail.com
+
+Github - https://github.com/vinplima
+
+---
 
 ## 7. Acknowledgements
 
-TO-DO 
+* Ansible Roles **ahuffman.resolv**, **mrlesmithjr.nfs-server** and **ondrejhome.targetcli**
