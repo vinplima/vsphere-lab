@@ -1,2 +1,8 @@
 ---
 # vars file for roles/vsphere-lab-kickstart-esxi
+
+esxi_powerstate: powered-on
+
+root_folder_name: VSPHERE-LAB
+lab_folder_name: "LAB{{ lab_padded_id }}"
+lab_full_path: "/{{ datacenter_name }}/vm/{{ root_folder_name }}/{{ lab_folder_name }}"

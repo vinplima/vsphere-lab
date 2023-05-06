@@ -1,13 +1,9 @@
 ---
 # tasks file for roles/vsphere-lab-prepare-esxi-for-vcenter
-- name: Set esxi01 fqdn
-  set_fact:
-    esxi_fqdn: "{{ esxi_servers.0.hostname }}.{{ lab_domain }}"
-
 - name: Gather info about vmhbas of the ESXi Host
   community.vmware.vmware_host_disk_info:
     hostname: "{{ external_ip }}"
-    port: "{{ esxi01_https_port }}"
+    port: "{{ esxi_https_port }}"
     username: "{{ esxi_root }}"
     password: "{{ default_lab_password }}"
     validate_certs: "{{ validate_certs }}"
@@ -18,24 +14,24 @@
 - name: Mount local VMFS datastore to ESXi Host
   community.vmware.vmware_host_datastore:
     hostname: "{{ external_ip }}"
-    port: "{{ esxi01_https_port }}"
+    port: "{{ esxi_https_port }}"
     username: "{{ esxi_root }}"
     password: "{{ default_lab_password }}"
     validate_certs: "{{ validate_certs }}"
     esxi_hostname: "{{ esxi_fqdn }}"
-    datastore_name: "{{ local_datastore_prefix }}{{ esxi_servers.0.hostname }}"
+    datastore_name: "{{ datastore_name }}"
     datastore_type: "{{ datastore_type }}"
     vmfs_device_name: "{{ item.canonical_name }}"
     vmfs_version: "{{ vmfs_version }}"
     state: present
   delegate_to: localhost
-  with_items: "{{ host_vmhbas.hosts_disk_info[ esxi_fqdn ] }}"
+  with_items: "{{ host_vmhbas.hosts_disk_info[esxi_fqdn] }}"
   when: item.canonical_name == disk_canonical_name
 
 - name: Add a VMware vSwitch
   community.vmware.vmware_vswitch:
     hostname: "{{ external_ip }}"
-    port: "{{ esxi01_https_port }}"
+    port: "{{ esxi_https_port }}"
     username: "{{ esxi_root }}"
     password: "{{ default_lab_password }}"
     validate_certs: "{{ validate_certs }}"
@@ -47,7 +43,7 @@
 - name: Add Management Network VM Portgroup
   community.vmware.vmware_portgroup:
     hostname: "{{ external_ip }}"
-    port: "{{ esxi01_https_port }}"
+    port: "{{ esxi_https_port }}"
     username: "{{ esxi_root }}"
     password: "{{ default_lab_password }}"
     validate_certs: "{{ validate_certs }}"

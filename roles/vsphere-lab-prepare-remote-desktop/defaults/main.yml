@@ -1,16 +1,15 @@
 ---
 # defaults file for roles/vsphere-lab-prepare-remote-desktop
-win_user_name: "labuser{{ lab_padded_id }}"
+lab_padded_id: '01'
 win_user_password: VMware1!
 
 firefox_download_url: https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US
-putty_download_url: https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.76-installer.msi
+putty_download_url: https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.78-installer.msi
 
 tmp_directory: C:\Temp
 
-#vmware_remote_console_zip_path: 
+vmware_remote_console_zip_url: http://127.0.0.1/rc.zip
 
-#ovf_template_windows_zip_path:
-#ovf_template_linux_zip_path:
-
-#iso_so_linux_path:
+ovf_template_windows_zip_url: null
+ovf_template_linux_zip_url: null
+iso_so_linux_url: null

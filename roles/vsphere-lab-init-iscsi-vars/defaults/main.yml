@@ -1,14 +1,8 @@
 ---
 # defaults file for roles/vsphere-lab-init-iscsi-vars
+iscsi_vols:
+  quantity: 1
+  vg_name: vg_iscsi
 
-target_wwn: iqn.2022-05.lab.vsphere:target
-disks: []
-initiators: []
-
-vol_name_prefix: vol
-vol_type: block
-
-initiator_wwn_prefix: iqn.1998-01.com.vmware 
-initiator_wwn_suffix: initiator
-
-iscsi_targets: []
+esxi_servers:
+  - hostname: esxi01

@@ -3,11 +3,11 @@
     "__comments": "Sample template to deploy a vCenter Server Appliance with an embedded Platform Services Controller on an ESXi host.",
     "new_vcsa": {
         "esxi": {
-            "hostname": "{{ esxi_servers.0.hostname }}",
+            "hostname": "{{ esxi_hostname }}",
             "username": "root",
             "password": "{{ default_lab_password }}",
             "deployment_network": "{{ pg_management_name }}",
-            "datastore": "{{ local_datastore_prefix }}{{ esxi_servers.0.hostname }}"
+            "datastore": "{{ datastore_name }}"
         },
         "appliance": {
             "__comments": [
@@ -25,13 +25,13 @@
             "prefix": "{{ vcenter_server.prefix }}",
             "gateway": "{{ management_network_gateway }}",
             "dns_servers": [
-                "{{ infra_servers.0.ip }}"
+                "{{ lab_dns_servers | join(',') }}"
             ]
         },
         "os": {
             "password": "{{ default_lab_password }}",
             "ntp_servers": [
-                "{{ ntp_servers | join('","') }}"
+                "{{ lab_ntp_servers | join('","') }}"
             ],
             "ssh_enable": true
         },

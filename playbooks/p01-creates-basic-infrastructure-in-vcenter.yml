@@ -1,0 +1,36 @@
+---
+#
+# Creates basic infrastructure in vCenter
+#
+# Description:
+#  - Creates Virtual Distributed Port Group for the laboratory
+#  - Creates Resource Pool
+#  - Creates VM directories
+#  - Creates VMs from templates
+
+- name: Create basic infrastructure in vCenter
+  hosts: vcenter
+  connection: local
+  gather_facts: true
+
+  # collections:
+  #   - community.vmware
+
+  pre_tasks:
+    - name: Include credentials
+      ansible.builtin.include_vars:
+        dir: ../credentials
+        extensions: ['yml', 'yaml']
+        ignore_unknown_extensions: true
+
+  roles:
+    - ../roles/vsphere-lab-resources
+
+  tasks:
+
+    - name: Ensure VMs network is connected
+      ansible.builtin.include_role:
+        name: ../roles/vsphere-lab-ensure-network-connected
+      with_items: "{{ infra_servers + rdp_servers }}"
+      vars:
+        vm_name: "{{ item.name }}"

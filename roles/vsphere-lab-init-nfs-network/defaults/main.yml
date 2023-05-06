@@ -1,6 +1,12 @@
 ---
 # defaults file for roles/vsphere-lab-init-nfs-network
-network_services:
-  - NetworkManager
-
 network_vlan_interface: ens192
+global_mtu: 9000
+
+management_network_gateway: 127.0.0.1
+
+nfs_server_ip: 127.0.0.1
+nfs_server_prefix: 24
+nfs_server_service_vlan: 1001
+nfs_server_service_ip: 127.0.0.1
+nfs_server_service_prefix: 24

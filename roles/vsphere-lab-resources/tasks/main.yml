@@ -20,7 +20,7 @@
     password: '{{ vcenter_credentials.password }}'
     validate_certs: "{{ validate_certs }}"
     datacenter_name: "{{ datacenter_name }}"
-    parent_folder: "{{ root_folder_name }}" 
+    parent_folder: "{{ root_folder_name }}"
     folder_name: "{{ lab_vm_folder_name }}"
     folder_type: vm
     state: present
@@ -49,15 +49,15 @@
   register: vm_info
 
 - name: Set list with created VMs
-  set_fact:
+  ansible.builtin.set_fact:
     created_vms: "{{ vm_info.virtual_machines | map(attribute='guest_name') | list }}"
 
 - name: Set list with VMs to be created
-  set_fact:
+  ansible.builtin.set_fact:
     to_be_created_vms: "{{ [vyos_server.name] + esxi_servers | map(attribute='name') | list + infra_servers | map(attribute='name') | list + rdp_servers | map(attribute='name') | list }}"
 
 - name: Creates virtual infra and virtual machines
-  include_tasks: create-virtual-infra.yml
+  ansible.builtin.include_tasks: create-virtual-infra.yml
   when: (created_vms | length) < (to_be_created_vms | length)
 
 - name: Ensure virtual machine powerstate
@@ -72,11 +72,12 @@
   delegate_to: localhost
   with_items: "{{ [vyos_server] + esxi_servers + infra_servers + rdp_servers }}"
 
-- name: Sleeps while VMs are starting 
-  wait_for: 
+- name: Sleeps while VMs are starting
+  ansible.builtin.wait_for:
     timeout: 60
 
 - name: Get vyos ip data
+  when: vyos_provision_ip is undefined
   block:
 
     - name: Wait for VMware tools to become available in vyos vm
@@ -92,7 +93,5 @@
       register: vyos_vm_facts
 
     - name: Sets vyos provision ipv4 fact
-      set_fact: 
+      ansible.builtin.set_fact:
         vyos_provision_ip: "{{ vyos_vm_facts.instance.ipv4 }}"
-
-  when: vyos_provision_ip is undefined

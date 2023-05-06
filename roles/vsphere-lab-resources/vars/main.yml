@@ -1,2 +1,21 @@
 ---
 # vars file for roles/vsphere-lab-resources
+
+# list of vlans to be used
+vlan_ranges: "{{ vlans | map(attribute='vlan_id') | list | join(',') }}"
+
+# vds and dpg configurations
+vds_dpg_name: "dpgVsphereLab{{ lab_padded_id }}"
+vds_name: "vdsVsphereLab{{ lab_padded_id }}"
+vds_version: "7.0.0"
+vds_mtu: 9000
+vds_uplink_quantity: 1
+
+# laboratory folders
+root_folder_name: VSPHERE-LAB
+lab_network_folder_full_path: "/{{ datacenter_name }}/network/{{ root_folder_name }}"
+lab_vm_folder_name: "LAB{{ lab_padded_id }}"
+lab_vm_folder_full_path: "/{{ datacenter_name }}/vm/{{ root_folder_name }}/{{ lab_vm_folder_name }}"
+
+# DRS affinity rule
+drs_affinity_rule: "vsphere-lab{{ lab_padded_id }}-affinity-rule"

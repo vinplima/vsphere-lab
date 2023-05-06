@@ -1,12 +1,15 @@
 ---
-- name: Upload esxi iso to server
-  copy:
-    src: "{{ esxi_iso_path }}"
-    dest: "/tmp"
+
+- name: Download esxi iso
+  ansible.builtin.get_url:
+    url: "{{ esxi_iso_url }}"
+    dest: /tmp
+    mode: '0644'
+  when: esxi_iso_url
   register: esxi_iso
 
 - name: Mount esxi iso
-  mount:
+  ansible.posix.mount:
     src: "{{ esxi_iso.dest }}"
     path: /mnt
     opts: ro
@@ -14,14 +17,14 @@
     fstype: iso9660
 
 - name: Copy iso content to tftp root if necessary
-  copy:
+  ansible.builtin.copy:
     src: /mnt/
     dest: "{{ dnsmasq_tftp_path }}"
     remote_src: true
-    directory_mode: yes
+    directory_mode: true
 
 - name: Unmount esxi iso
-  mount:
+  ansible.posix.mount:
     src: "{{ esxi_iso.dest }}"
     path: /mnt
     opts: ro
@@ -29,6 +32,6 @@
     fstype: iso9660
 
 - name: Remove iso file
-  file: 
+  ansible.builtin.file:
     path: "{{ esxi_iso.dest }}"
     state: absent

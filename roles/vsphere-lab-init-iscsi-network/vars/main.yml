@@ -1,2 +1,4 @@
 ---
 # vars file for roles/vsphere-lab-init-iscsi-network
+network_services:
+  - NetworkManager

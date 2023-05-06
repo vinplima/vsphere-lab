@@ -1,2 +1,3 @@
 ---
 # vars file for roles/vsphere-lab-prepare-remote-desktop
+win_user_name: "labuser{{ lab_padded_id }}"

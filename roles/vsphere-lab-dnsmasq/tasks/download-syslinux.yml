@@ -1,26 +1,27 @@
 ---
 - name: Download syslinux zip
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ dnsmasq_syslinux_url }}"
-    dest: /tmp/syslinux.zip
+    dest: /tmp
     mode: '0644'
+  register: syslinux_zip
 
 - name: Extract syslinux files
-  unarchive:
-    src: "/tmp/syslinux.zip"
+  ansible.builtin.unarchive:
+    src: "{{ syslinux_zip.dest }}"
     dest: /tmp
     remote_src: true
 
 - name: Copy pxelinux.0 file
-  copy:
+  ansible.builtin.copy:
     src: /tmp/core/pxelinux.0
-    dest: "{{dnsmasq_tftp_path}}"
+    dest: "{{ dnsmasq_tftp_path }}"
     remote_src: true
 
 - name: Remove syslinux tmp files
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:
     - /tmp/core
-    - /tmp/syslinux.zip
+    - "{{ syslinux_zip.dest }}"

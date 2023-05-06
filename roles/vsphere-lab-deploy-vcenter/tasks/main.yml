@@ -3,20 +3,22 @@
 
 # install ovftool
 - name: Check if ovftool is installed
-  shell: command -v ovftool >/dev/null 2>&1
+  ansible.builtin.shell:
+    cmd: command -v ovftool >/dev/null 2>&1
   register: ovftool_installed
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Install ovftool
-  include_tasks: install-ovftool.yml
+  ansible.builtin.include_tasks: install-ovftool.yml
   when: ovftool_installed.rc == 1
 
 # deploy vcenter
 - name: Check if vcenter was deployed
-  shell: "ovftool --noSSLVerify vi://root:'{{ default_lab_password }}'@{{ esxi_servers.0.hostname }} | grep vcenter > /dev/null 2>&1"
+  ansible.builtin.shell:
+    cmd: "ovftool --noSSLVerify vi://root:'{{ default_lab_password }}'@{{ esxi_hostname }} | grep vcenter > /dev/null 2>&1"
   register: vcenter_deployed
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Deploy vcenter
-  include_tasks: deploy-vcenter.yml
+  ansible.builtin.include_tasks: deploy-vcenter.yml
   when: vcenter_deployed.rc == 1

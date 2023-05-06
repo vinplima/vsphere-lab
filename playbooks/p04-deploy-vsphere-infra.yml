@@ -1,0 +1,57 @@
+---
+
+#
+# Kickstarts ESXi servers
+#
+- name: Kickstarts ESXi Servers
+  hosts: vcenter
+  connection: local
+  gather_facts: true
+
+  pre_tasks:
+    - name: Include credentials
+      ansible.builtin.include_vars:
+        dir: ../credentials
+        extensions: ['yml', 'yaml']
+        ignore_unknown_extensions: true
+
+  roles:
+    - ../roles/vsphere-lab-kickstart-esxi
+
+#
+# Configure ESXi for vCenter deployment
+#
+- name: Prepare esxi01 for vCenter installation
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  pre_tasks:
+
+    - name: Set target esxi variables
+      ansible.builtin.set_fact:
+        esxi_hostname: "{{ esxi_servers.0.hostname }}"
+        esxi_https_port: "{{ item.external_port }}"
+      loop: "{{ esxi_servers.0.nat_rules }}"
+      when: item.internal_port == 443
+
+  roles:
+    - ../roles/vsphere-lab-prepare-esxi-for-vcenter
+
+#
+# Installs vCenter Server
+#
+- name: Deploy vcenter appliance
+  hosts: deployvcenter
+  gather_facts: true
+
+  pre_tasks:
+
+    - name: Set vcenter install variables
+      ansible.builtin.set_fact:
+        esxi_hostname: "{{ esxi_servers.0.hostname }}"
+        lab_dns_servers: "{{ [infra_servers.0.ip] }}"
+        lab_ntp_servers: "{{ ntp_servers }}"
+
+  roles:
+    - ../roles/vsphere-lab-deploy-vcenter

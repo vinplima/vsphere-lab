@@ -1,2 +1,3 @@
 ---
 # vars file for roles/vsphere-lab-deploy-vcenter
+datastore_name: "local_{{ esxi_hostname }}"

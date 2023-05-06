@@ -7,6 +7,7 @@ name = "pypi"
 ansible = "5.2.0"
 paramiko = "2.9.2"
 pyvmomi = "7.0.3"
+requests = "*"
 
 [dev-packages]
 ansible-lint = "*"

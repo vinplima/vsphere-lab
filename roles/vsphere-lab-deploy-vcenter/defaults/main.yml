@@ -8,3 +8,23 @@ sso:
   domain_name: vsphere.local
 
 ceip_enabled: "false"
+
+default_lab_password: VMware1!
+
+lab_dns_servers: []
+lab_ntp_servers: []
+
+esxi_hostname: esxi01
+pg_management_name: pgManagement
+management_network_gateway: 127.0.0.1
+
+lab_domain: vsphere.lab
+
+ovftool_bundle_url: http://127.0.0.1/ovf.bundle
+vcsa_iso_url: http://127.0.0.1/vcsa.iso
+
+vcenter_server:
+  name: "vapp-vcenter7"
+  hostname: vcenter
+  ip: 127.0.0.1
+  prefix: 32

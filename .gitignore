@@ -1,10 +1,11 @@
 .vagrant
-credentials/*.yml
-!group_vars/all.yml
-group_vars/*.yml
+# credentials/*.yml
+# !group_vars/all.yml
+# group_vars/*.yml
 test*.yml
-inventories/hosts*
+# inventories/hosts*
 *.vdi
 hosts
 .roles
 .collections
+.vscode

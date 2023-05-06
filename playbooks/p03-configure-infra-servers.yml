@@ -1,0 +1,92 @@
+---
+#
+# Configures infra servers
+#
+
+# bootstrap all servers
+- name: Bootstrap infra servers
+  hosts: infraserver
+  gather_facts: true
+
+  roles:
+    - ../roles/vsphere-lab-infrabootstrap
+
+# configures dnsmasq
+- name: Configure dnsmasq
+  hosts: dnsmasq
+  gather_facts: true
+
+  roles:
+    - ../roles/vsphere-lab-dnsmasq
+
+# configures nfs server VLAN
+- name: Provision nfs server VLAN
+  hosts: nfsserver
+  gather_facts: true
+
+  roles:
+    - ../roles/vsphere-lab-init-nfs-network
+
+  vars:
+    nfs_server_ip: "{{ infra_servers.1.ip }}"
+    nfs_server_prefix: "{{ infra_servers.1.prefix }}"
+    nfs_server_service_vlan: "{{ nfs_server.vlan }}"
+    nfs_server_service_ip: "{{ nfs_server.ip }}"
+    nfs_server_service_prefix: "{{ nfs_server.prefix }}"
+
+# configures iscsi server vlan
+- name: Provision iSCSI server VLAN
+  hosts: iscsi
+  gather_facts: true
+
+  roles:
+    - ../roles/vsphere-lab-init-iscsi-network
+
+  vars:
+    iscsi_server_ip: "{{ infra_servers.2.ip }}"
+    iscsi_server_prefix: "{{ infra_servers.2.prefix }}"
+    iscsi_server_service_vlan: "{{ iscsi_server.vlan }}"
+    iscsi_server_service_ip: "{{ iscsi_server.ip }}"
+    iscsi_server_service_prefix: "{{ iscsi_server.prefix }}"
+
+# configures dns in others servers
+- name: Configures DNS in others infra servers
+  hosts: dnsmasqclients
+  gather_facts: true
+
+  tasks:
+    - name: Remove old DNS from network interfaces
+      ansible.builtin.lineinfile:
+        path: "/etc/sysconfig/network-scripts/ifcfg-{{ network_vlan_interface }}"
+        state: absent
+        regexp: '^DNS'
+
+  roles:
+    - role: ahuffman.resolv
+      resolv_nameservers:
+        - "{{ infra_servers.0.ip }}"
+      resolv_domain: "{{ lab_domain }}"
+      resolv_search:
+        - "{{ lab_domain }}"
+
+# configures nfs server and exports
+- name: Provision nfs server
+  hosts: nfsserver
+  gather_facts: true
+
+  roles:
+    - ../roles/vsphere-lab-init-nfs-vars
+    - ../roles/vsphere-lab-init-nfs-fs
+    - role: mrlesmithjr.nfs-server
+
+# configures iscsi server and volumes
+- name: Configure iSCSI server volumes
+  hosts: iscsi
+  gather_facts: true
+
+  roles:
+    - ../roles/vsphere-lab-init-iscsi-vars
+    - ../roles/vsphere-lab-init-iscsi-fs
+    - role: ondrejhome.targetcli
+  vars:
+    ansible_distribution: CentOS

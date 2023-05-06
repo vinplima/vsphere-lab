@@ -3,22 +3,22 @@
 
 # configures package repos
 - name: Adds Oracle Linux package repos
-  template: 
+  ansible.builtin.template:
     src: oracle-linux.repo.j2
     dest: /etc/yum.repos.d/oracle-linux.repo
     mode: 0644
 
 # install packages
 - name: Install packages
-  yum:
+  ansible.builtin.yum:
     name: "{{ item }}"
     state: present
   with_items: "{{ packages }}"
 
 # configures time service
 - name: Configures chrony
-  template: 
+  ansible.builtin.template:
     src: chrony.conf.j2
     dest: /etc/chrony.conf
     mode: 0644
-  notify: restart chronyd    
+  notify: restart chronyd

@@ -12,7 +12,7 @@
     pvs: "{{ device_path }}1"
 
 - name: Creates LVs
-  include_tasks: creates-iscsi-vols-lv.yml
+  ansible.builtin.include_tasks: creates-iscsi-vols-lv.yml
   loop: "{{ range(1, iscsi_vols.quantity + 1) | list }}"
-  vars: 
+  vars:
     lv_name: "vol{{ item }}"

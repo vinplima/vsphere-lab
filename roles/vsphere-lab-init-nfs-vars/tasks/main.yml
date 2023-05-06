@@ -1,13 +1,5 @@
 ---
 # tasks file for roles/vsphere-lab-init-nfs-vars
-- name: Initiates nfs_server_exports
-  set_fact:
-    nfs_server_exports: []
-
 - name: Configures variable
-  include_tasks: init-nfs-vars.yml
-  with_items: "{{ nfs_exports.paths }}"
-
-# - name: Debug nfs server exports
-#   debug:
-#     msg: "{{ nfs_server_exports }}"
+  ansible.builtin.include_tasks: init-nfs-vars.yml
+  loop: "{{ nfs_exports.paths }}"

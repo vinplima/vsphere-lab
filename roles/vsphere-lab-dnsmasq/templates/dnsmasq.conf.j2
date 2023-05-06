@@ -1,21 +1,21 @@
 {% for item in dns_servers %}
-server={{item}}
+server={{ item }}
 {% endfor %}
 expand-hosts
-domain={{lab_domain}}
-local=/{{lab_domain}}/
-listen-address={{infra_servers.0.ip}},127.0.0.1
+domain={{ lab_domain }}
+local=/{{ lab_domain }}/
+listen-address={{ infra_servers.0.ip }},127.0.0.1
 
-dhcp-range={{dhcp_range.start}},{{dhcp_range.end}},24h
+dhcp-range={{ dhcp_range.start }},{{ dhcp_range.end }},24h
 dhcp-option=option:router,{{ management_network_gateway }}
 
 {% for item in esxi_servers %}
-dhcp-host={{item.mac_addresses.0}},{{item.ip}}
+dhcp-host={{ item.mac_addresses.0 }},{{ item.ip }}
 {% endfor %}
 
 log-dhcp
 enable-tftp
-tftp-root={{dnsmasq_tftp_root_path}}
+tftp-root={{ dnsmasq_tftp_root_path }}
 
 pxe-prompt="Booting PXE Client", 1
 

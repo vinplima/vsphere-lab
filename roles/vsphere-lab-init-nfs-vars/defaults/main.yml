@@ -1,2 +1,9 @@
 ---
 # defaults file for roles/vsphere-lab-init-nfs-vars
+nfs_exports:
+  paths:
+    - /srv/nfs/datastore01
+  datastores:
+    - nfs_datastore01
+  export_size_gb: 100
+  client_network: 127.0.0.1/32

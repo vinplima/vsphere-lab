@@ -2,19 +2,20 @@
 # install ovftool
 
 # copy ovftool bundle
-- name: Upload ovftool installer to server
-  copy:
-    src: "{{ ovftool_bundle_path }}"
+- name: Download ovftool installer to server
+  ansible.builtin.get_url:
+    url: "{{ ovftool_bundle_url }}"
     dest: "/tmp"
     mode: '0755'
   register: ovftool_bundle
 
 # install ovftool
 - name: Executes ovftool installer
-  shell: "{{ ovftool_bundle.dest }} --eulas-agreed --required"
-  
+  ansible.builtin.shell:
+    cmd: "{{ ovftool_bundle.dest }} --eulas-agreed --required"
+
 # clean installer
 - name: Removes ovftool installer
-  file:
+  ansible.builtin.file:
     path: "{{ ovftool_bundle.dest }}"
     state: absent

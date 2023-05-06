@@ -3,94 +3,94 @@
 
 # install packages
 - name: Install packages
-  yum: 
+  ansible.builtin.yum:
     name: "{{ item }}"
     state: present
   with_items: "{{ packages }}"
 
 # create directories
 - name: Create directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: 0755
-  with_items: 
+  with_items:
     - "{{ dnsmasq_tftp_path }}"
     - "{{ dnsmasq_nfs_path }}"
     - "{{ dnsmasq_tftp_path }}/pxelinux.cfg"
 
 # copy files for pxeboot from esxi iso
 - name: Check if iso files were copied
-  stat: 
+  ansible.builtin.stat:
     path: "{{ dnsmasq_tftp_path }}/boot.cfg"
   register: boot_file
 
 - name: Copy esxi 7 iso files if necessary
-  include_tasks: copy-esxi-iso.yml
+  ansible.builtin.include_tasks: copy-esxi-iso.yml
   when: not boot_file.stat.exists
 
 # Make chages into files
 - name: Replace trailing backspace from boot files
-  replace:
-    path: "{{item}}"
+  ansible.builtin.replace:
+    path: "{{ item }}"
     regexp: "\/"
     replace: ""
-    backup: yes
+    backup: true
   with_items:
-    - "{{dnsmasq_tftp_path}}/boot.cfg"
-    - "{{dnsmasq_tftp_path}}/efi/boot/boot.cfg"
+    - "{{ dnsmasq_tftp_path }}/boot.cfg"
+    - "{{ dnsmasq_tftp_path }}/efi/boot/boot.cfg"
 
 - name: Configure kernelopt to kickstart file
-  replace:
-    path: "{{item}}"
+  ansible.builtin.replace:
+    path: "{{ item }}"
     regexp: "kernelopt.+"
-    replace: "kernelopt=ks=nfs://{{infra_servers.0.ip}}{{dnsmasq_nfs_path}}/ks.cfg"
-    backup: yes
+    replace: "kernelopt=ks=nfs://{{ infra_servers.0.ip }}{{ dnsmasq_nfs_path }}/ks.cfg"
+    backup: true
   with_items:
-    - "{{dnsmasq_tftp_path}}/boot.cfg"
-    - "{{dnsmasq_tftp_path}}/efi/boot/boot.cfg"
+    - "{{ dnsmasq_tftp_path }}/boot.cfg"
+    - "{{ dnsmasq_tftp_path }}/efi/boot/boot.cfg"
 
-# prepare kickstart file 
+# prepare kickstart file
 - name: Create kickstart file
-  template: 
+  ansible.builtin.template:
     src: ks.cfg.j2
-    dest: "{{dnsmasq_nfs_path}}/ks.cfg"
+    dest: "{{ dnsmasq_nfs_path }}/ks.cfg"
     mode: 0644
 
 # prepare syslinux for BIOS boot
 - name: Check if pxelinux.0 file was copied
-  stat: 
+  ansible.builtin.stat:
     path: "{{ dnsmasq_tftp_path }}/pxelinux.0"
   register: pxelinux_file
 
 - name: Copy syslinux files if necessary
-  include_tasks: download-syslinux.yml
+  ansible.builtin.include_tasks: download-syslinux.yml
   when: not pxelinux_file.stat.exists
 
-- name: copy isolinux.cfg to pxelinux.cfg
-  copy: 
+- name: Copy isolinux.cfg to pxelinux.cfg
+  ansible.builtin.copy:
     src: "{{dnsmasq_tftp_path}}/isolinux.cfg"
     dest: "{{dnsmasq_tftp_path}}/pxelinux.cfg/default"
     remote_src: true
 
 # dnsmasq configuration
-- name: configure dnsmasq
-  template:
+- name: Configure dnsmasq
+  ansible.builtin.template:
     src: dnsmasq.conf.j2
     dest: /etc/dnsmasq.conf
     mode: 0644
   notify: restart dnsmasq
 
-- name: configure hosts
-  template: 
+- name: Configure hosts
+  ansible.builtin.template:
     src: hosts.j2
     dest: /etc/hosts
     mode: 0644
   notify: restart dnsmasq
 
 # nfs configuration
-- name: configure nfs export
-  template: 
+- name: Configure nfs export
+  ansible.builtin.template:
     src: exports.j2
     dest: /etc/exports
     mode: 0644

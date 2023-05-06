@@ -1,17 +1,25 @@
 ---
 # defaults file for roles/vsphere-lab-kickstart-esxi
-esxi_powerstate: powered-on
-
 vcenter_hostname: vcenter.local
-
 vcenter_credentials:
   username: administrator@vsphere.local
   password: VMware1!
-    
+
 validate_certs: false
+
+# timeouts and delays
+vmware_guest_tools_wait_timeout: 1200
+ansible_wait_for_delay: 30
+ansible_wait_for_timeout: 1200
 
 datacenter_name: LAB
 
-root_folder_name: VSPHERE-LAB
-lab_folder_name: "LAB{{ lab_padded_id }}"
-lab_full_path: "/{{ datacenter_name}}/vm/{{ root_folder_name }}/{{ lab_folder_name }}"
+external_ip: 127.0.0.1
+
+esxi_servers:
+
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi01"
+    nat_rules:
+      - external_port: 11443
+        internal_port: 443
+        description: HTTPS to esxi01 server

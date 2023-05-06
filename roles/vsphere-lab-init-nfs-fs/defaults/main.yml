@@ -1,5 +1,5 @@
 ---
 # defaults file for roles/vsphere-lab-init-nfs-fs
-device_path: /dev/sdb
-vg_name: vg_nfs
-fstype: ext4 
+nfs_exports:
+  paths:
+    - /srv/nfs/datastore01

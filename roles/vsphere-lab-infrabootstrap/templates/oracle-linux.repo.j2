@@ -1,6 +1,6 @@
 {% for item in repos %}
 [{{ item.name }}]
-name=Oracle Linux 8 BaseOS Latest (x86_64)
+name={{ item.description }}
 baseurl={{ item.url }}
 gpgkey={{ item.gpgkey }}
 gpgcheck=1

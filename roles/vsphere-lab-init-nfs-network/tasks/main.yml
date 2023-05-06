@@ -1,29 +1,29 @@
 ---
 # tasks file for roles/vsphere-lab-init-nfs-network
 - name: Ensure services are started
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: started
     enabled: true
   with_items: "{{ network_services }}"
 
 - name: Adjust virtual interface MTU
-  nmcli:
+  community.general.nmcli:
     type: ethernet
     conn_name: "conn-{{ network_vlan_interface }}"
     ifname: "{{ network_vlan_interface }}"
     mtu: "{{ global_mtu }}"
-    ip4: "{{ infra_servers.1.ip }}/{{ infra_servers.1.prefix }}"
+    ip4: "{{ nfs_server_ip }}/{{ nfs_server_prefix }}"
     gw4: "{{ management_network_gateway }}"
     state: present
 
 - name: Create NFS VLAN interface
-  nmcli:
+  community.general.nmcli:
     type: vlan
-    conn_name: "conn-{{ network_vlan_interface }}.{{ nfs_server.vlan }}"
-    vlanid: "{{ nfs_server.vlan }}"
+    conn_name: "conn-{{ network_vlan_interface }}.{{ nfs_server_service_vlan }}"
+    vlanid: "{{ nfs_server_service_vlan }}"
     vlandev: "{{ network_vlan_interface }}"
-    ifname: "{{ network_vlan_interface }}.{{ nfs_server.vlan }}"
+    ifname: "{{ network_vlan_interface }}.{{ nfs_server_service_vlan }}"
     mtu: "{{ global_mtu }}"
-    ip4: "{{ nfs_server.ip }}/{{ nfs_server.prefix }}"
+    ip4: "{{ nfs_server_service_ip }}/{{ nfs_server_service_prefix }}"
     state: present

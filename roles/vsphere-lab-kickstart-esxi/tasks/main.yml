@@ -1,5 +1,7 @@
 ---
 # tasks file for roles/vsphere-lab-kickstart-esxi
 - name: Kickstart ESXis
-  include_tasks: kickstart-esxi.yml
-  with_items: "{{ esxi_servers | map(attribute='name') | list }}"
+  ansible.builtin.include_tasks: kickstart-esxi.yml
+  loop: "{{ esxi_servers }}"
+  loop_control:
+    loop_var: esxi_server

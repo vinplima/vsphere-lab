@@ -1,9 +1,13 @@
 ---
 # defaults file for roles/vsphere-lab-prepare-esxi-for-vcenter
-esxi_root: root
 validate_certs: false
-datastore_type: vmfs
-vmfs_version: 6
-disk_canonical_name: "mpx.vmhba0:C0:T1:L0"
-virtual_switch_name: vSwitch1
-virtual_switch_nic: vmnic1
+
+global_mtu: 9000
+external_ip: 127.0.0.1
+lab_domain: vsphere.lab
+default_lab_password: VMware1!
+
+esxi_hostname: esxi01
+esxi_https_port: 11443
+
+pg_management_name: pgManagement

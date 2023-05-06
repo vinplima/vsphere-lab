@@ -1,0 +1,28 @@
+---
+#
+# Configures inventory with vyos IP
+#
+- name: Configure vyos group in in-memory inventory
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  tasks:
+    - name: Add vyos provision IP to inventory group
+      ansible.builtin.add_host:
+        name: "{{ vyos_provision_ip }}"
+        groups: vyos
+
+#
+# Configures vyos router
+#
+# Description:
+#  - Configures vyos interfaces
+#  - Configures vyos NAT rules
+
+- name: Configure vyos router
+  hosts: vyos
+  gather_facts: false
+
+  roles:
+    - ../roles/vsphere-lab-vyos

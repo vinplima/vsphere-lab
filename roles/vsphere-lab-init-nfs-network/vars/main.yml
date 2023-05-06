@@ -1,2 +1,4 @@
 ---
 # vars file for roles/vsphere-lab-init-nfs-network
+network_services:
+  - NetworkManager

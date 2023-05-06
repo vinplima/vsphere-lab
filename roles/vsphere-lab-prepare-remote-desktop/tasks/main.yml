@@ -1,7 +1,7 @@
 ---
 # tasks file for roles/vsphere-lab-prepare-remote-desktop
-- name: Ensure user {{ win_user_name }} is present
-  win_user:
+- name: Ensure user is present - {{ win_user_name }}
+  ansible.windows.win_user:
     name: "{{ win_user_name }}"
     password: "{{ win_user_password }}"
     state: present
@@ -9,71 +9,88 @@
       - Administrators
 
 - name: Start terminal service
-  win_service:
+  ansible.windows.win_service:
     name: TermService
     start_mode: auto
     state: started
 
 - name: Creates temporary directory
-  win_file:
+  ansible.windows.win_file:
     path: "{{ tmp_directory }}"
     state: directory
 
+#
+# Installs Firefox
+#
 - name: Download firefox installer
-  win_get_url:
+  ansible.windows.win_get_url:
     url: "{{ firefox_download_url }}"
-    dest: "{{ tmp_directory }}\\firefox_installer.exe"
+    # dest: "{{ tmp_directory }}\\firefox_installer.exe"
+    dest: "{{ tmp_directory }}"
   register: firefox_installer
 
 - name: Install firefox
-  win_package:
+  ansible.windows.win_package:
     path: "{{ firefox_installer.dest }}"
     arguments: /S
 
-- name: Download putty
-  win_get_url:
+#
+# Install Putty
+#
+- name: Download putty installer
+  ansible.windows.win_get_url:
     url: "{{ putty_download_url }}"
-    dest: "{{ tmp_directory }}\\putty_installer.msi"
+    # dest: "{{ tmp_directory }}\\putty_installer.msi"
+    dest: "{{ tmp_directory }}"
   register: putty_installer
 
 - name: Install putty
-  win_package:
+  ansible.windows.win_package:
     path: "{{ putty_installer.dest }}"
 
-- name: Copy remote console zip to server
-  win_copy:
-    src: "{{ vmware_remote_console_zip_path }}"
-    dest: "{{ tmp_directory }}/remote_console.zip"
+#
+# Install Remote Console
+#
+- name: Download remote console zip to server
+  ansible.windows.win_get_url:
+    url: "{{ vmware_remote_console_zip_url }}"
+    dest: "{{ tmp_directory }}"
   register: vmware_remote_console_file
 
 - name: Unzip remote console
-  win_unzip: 
+  community.windows.win_unzip:
     src: "{{ vmware_remote_console_file.dest }}"
     dest: "{{ tmp_directory }}/RemoteConsole"
   register: remote_console_unzipped
 
 - name: Find remote console installer path
-  win_find: 
+  ansible.windows.win_find:
     paths: "{{ remote_console_unzipped.dest }}"
     patterns:
       - '*.exe'
   register: remote_console_exe
 
 - name: Install remote console
-  win_package:
+  ansible.windows.win_package:
     path: "{{ remote_console_exe.files.0.path }}"
     arguments: /s /v "/qn EULAS_AGREED=1 AUTOSOFTWAREUPDATE=0 DATACOLLECTION=0"
 
+#
+# Download files to 
+#
 - name: Copy files for laboratory activities
-  win_copy:
+  ansible.windows.win_get_url:
     src: "{{ item }}"
-    dest: "{{ tmp_directory }}/"
-  with_items:
-    - "{{ ovf_template_windows_zip_path }}"
-    - "{{ ovf_template_linux_zip_path }}"
-    - "{{ iso_so_linux_path }}"
+    dest: "{{ tmp_directory }}"
+  loop:
+    - "{{ ovf_template_windows_zip_url }}"
+    - "{{ ovf_template_linux_zip_url }}"
+    - "{{ iso_so_linux_url }}"
+  when: item
 
+#
+# Reboot Windows
+#
 - name: Reboot windows server
-  win_reboot:
+  ansible.windows.win_reboot:
     reboot_timeout: 600
-

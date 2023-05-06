@@ -2,41 +2,44 @@
 # deploys vcenter
 
 # copy vcsa iso
-  - name: VCSA Installation block
-    block: 
-      - name: Upload vcsa iso to server
-        copy:
-          src: "{{ vcsa_iso_path }}"
-          dest: "/tmp"
-        register: vcsa_iso
+- name: VCSA Installation block
+  block:
 
-      - name: Mount vcsa iso
-        mount:
-          src: "{{ vcsa_iso.dest }}"
-          path: /mnt
-          opts: ro
-          state: mounted
-          fstype: iso9660
+    - name: Download vcsa iso to server
+      ansible.builtin.get_url:
+        url: "{{ vcsa_iso_url }}"
+        dest: /tmp
+        mode: '0644'
+      register: vcsa_iso
 
-      - name: Place installation template
-        template: 
-          src: embedded_vCSA_on_ESXi.json.j2
-          dest: /tmp/embedded_vCSA_on_ESXi.json
-          mode: 0644
+    - name: Mount vcsa iso
+      ansible.posix.mount:
+        src: "{{ vcsa_iso.dest }}"
+        path: /mnt
+        opts: ro
+        state: mounted
+        fstype: iso9660
 
-      - name: Deploy vcsa appliance
-        shell: /mnt/vcsa-cli-installer/lin64/vcsa-deploy install --accept-eula --no-ssl-certificate-verification /tmp/embedded_vCSA_on_ESXi.json > /dev/null 2>&1
-    
-    always: 
-      - name: Unmount vcsa iso
-        mount:
-          src: "{{ vcsa_iso.dest }}"
-          path: /mnt
-          opts: ro
-          state: unmounted
-          fstype: iso9660
+    - name: Place installation template
+      ansible.builtin.template:
+        src: embedded_vCSA_on_ESXi.json.j2
+        dest: /tmp/embedded_vCSA_on_ESXi.json
+        mode: '0644'
 
-      - name: Remove vcsa iso file
-        file: 
-          path: "{{ vcsa_iso.dest }}"
-          state: absent
+    - name: Deploy vcsa appliance
+      ansible.builtin.shell:
+        cmd: /mnt/vcsa-cli-installer/lin64/vcsa-deploy install --accept-eula --no-ssl-certificate-verification /tmp/embedded_vCSA_on_ESXi.json > /dev/null 2>&1
+
+  always:
+    - name: Unmount vcsa iso
+      ansible.posix.mount:
+        src: "{{ vcsa_iso.dest }}"
+        path: /mnt
+        opts: ro
+        state: unmounted
+        fstype: iso9660
+
+    - name: Remove vcsa iso file
+      ansible.builtin.file:
+        path: "{{ vcsa_iso.dest }}"
+        state: absent

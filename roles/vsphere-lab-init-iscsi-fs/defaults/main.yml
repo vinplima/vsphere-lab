@@ -1,3 +1,6 @@
 ---
 # defaults file for roles/vsphere-lab-init-iscsi-fs
-device_path: /dev/sdb
+iscsi_vols:
+  size_gb: 100
+  quantity: 1
+  vg_name: vg_iscsi

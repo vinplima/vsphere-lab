@@ -1,2 +1,38 @@
 ---
 # vars file for roles/vsphere-lab-vyos
+vyos_fqdn: "vyos.{{ lab_domain }}"
+
+vyos_save_configuration: true
+
+vyos_interfaces:
+  - ipv4: []
+    description: Provision Interface
+    enabled: true
+    mtu: 1500
+  - ipv4:
+      - address: "{{ external_ip }}/{{ external_cidr }}"
+    description: External Network
+    enabled: true
+    mtu: 1500
+  - ipv4:
+      - address: 172.16.100.1/24
+    description: Internal Network
+    enabled: true
+    mtu: 9000
+
+vyos_vlan_interface: eth2
+
+vyos_external_networks: "{{ route_networks }}"
+
+vyos_dhcp_networks: []
+
+# TODO improve NAT rules creations logic (too hardcoded)
+vyos_nat_destination_rules: []
+
+vyos_nat_source_rules:
+  - description: "Masquerade internal Network"
+    source:
+      address: 172.16.0.0/16
+    translation:
+      address: masquerade
+    outbound_interface: eth1

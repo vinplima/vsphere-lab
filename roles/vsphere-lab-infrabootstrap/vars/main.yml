@@ -1,9 +1,19 @@
 ---
 # vars file for roles/vsphere-lab-infrabootstrap
-# repos:
-#   - name: ol8_baseos_latest
-#     url: 'http://inframanager.rede.tst/pulp/repos/TST/Library/custom/Oracle_Linux_8_x86_64/ol8_baseos_latest/'
-#     gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
-#   - name: ol8_appstream
-#     url: 'http://inframanager.rede.tst/pulp/repos/TST/Library/custom/Oracle_Linux_8_x86_64/ol8_appstream/'
-#     gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+repos:
+
+  - name: ol8_baseos_latest
+    url: "{{ ol8_baseos_latest_repo_url }}"
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+    description: OL8 OS Latest
+
+  - name: ol8_appstream
+    url: "{{ ol8_appstream_repo_url }}"
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+    description: OL8 App Stream
+
+packages:
+  - chrony
+  - libnsl.x86_64
+  - langpacks-en
+  - glibc-all-langpacks

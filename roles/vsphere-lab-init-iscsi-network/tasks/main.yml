@@ -1,29 +1,29 @@
 ---
 # tasks file for roles/vsphere-lab-init-iscsi-network
 - name: Ensure services are started
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: started
     enabled: true
   with_items: "{{ network_services }}"
 
 - name: Adjust virtual interface MTU
-  nmcli:
+  community.general.nmcli:
     type: ethernet
     conn_name: "conn-{{ network_vlan_interface }}"
     ifname: "{{ network_vlan_interface }}"
     mtu: "{{ global_mtu }}"
-    ip4: "{{ infra_servers.2.ip }}/{{ infra_servers.2.prefix }}"
+    ip4: "{{ iscsi_server_ip }}/{{ iscsi_server_prefix }}"
     gw4: "{{ management_network_gateway }}"
     state: present
 
 - name: Create ISCSI VLAN interface
-  nmcli:
+  community.general.nmcli:
     type: vlan
-    conn_name: "conn-{{ network_vlan_interface }}.{{ iscsi_server.vlan }}"
-    vlanid: "{{ iscsi_server.vlan }}"
+    conn_name: "conn-{{ network_vlan_interface }}.{{ iscsi_server_service_vlan }}"
+    vlanid: "{{ iscsi_server_service_vlan }}"
     vlandev: "{{ network_vlan_interface }}"
-    ifname: "{{ network_vlan_interface }}.{{ iscsi_server.vlan }}"
+    ifname: "{{ network_vlan_interface }}.{{ iscsi_server_service_vlan }}"
     mtu: "{{ global_mtu }}"
-    ip4: "{{ iscsi_server.ip }}/{{ iscsi_server.prefix }}"
+    ip4: "{{ iscsi_server_service_ip }}/{{ iscsi_server_service_prefix }}"
     state: present

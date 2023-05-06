@@ -1,24 +1,24 @@
 ---
 # tasks file for roles/vsphere-lab-init-iscsi-vars
 - name: Create disks list
-  set_fact:
-    disks: "{{ disks | default([]) + [new_disk] }}"
-  with_items: "{{ range(1, iscsi_vols.quantity + 1) | list }}"
+  ansible.builtin.set_fact:
+    disks: "{{ disks + [new_disk] }}"
+  loop: "{{ range(1, iscsi_vols.quantity + 1) | list }}"
   vars:
-    new_disk: 
+    new_disk:
       path: "/dev/{{ iscsi_vols.vg_name }}/{{ vol_name_prefix }}{{ item }}"
       name: "{{ vol_name_prefix }}{{ item }}"
       type: "{{ vol_type }}"
 
 - name: Create initiator list
-  set_fact:
-    initiators: "{{ initiators | default([]) + [new_initiator] }}"
-  with_items: "{{ esxi_servers }}"
+  ansible.builtin.set_fact:
+    initiators: "{{ initiators + [new_initiator] }}"
+  loop: "{{ esxi_servers }}"
   vars:
     new_initiator: "{{ initiator_wwn_prefix }}:{{ item.hostname }}.{{ lab_domain }}:{{ initiator_wwn_suffix }}"
 
 - name: Set iscsi targets fact
-  set_fact: 
+  ansible.builtin.set_fact:
     iscsi_targets:
       - wwn: "{{ target_wwn }}"
         disks: "{{ disks }}"

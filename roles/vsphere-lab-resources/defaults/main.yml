@@ -1,46 +1,98 @@
 ---
 # defaults file for roles/vsphere-lab-resources
+
+lab_padded_id: "1"
+
+# vcenter fqdn
 vcenter_hostname: vcenter.local
 
+# vcenter credentials
 vcenter_credentials:
   username: administrator@vsphere.local
   password: VMware1!
-    
+
+# certs validation
 validate_certs: false
 
-vlan_ranges: "{{ vlans | map(attribute='vlan_id') | list | join(',') }}"
-
-vds_dpg_name: "dpgVsphereLab{{ lab_padded_id }}"
-vds_name: "vdsVsphereLab{{ lab_padded_id }}"
-vds_version: "7.0.0"
-vds_mtu: 9000
-vds_uplink_quantity: 1
-
+# data center name
 datacenter_name: LAB
+
+# cluster name
 cluster_name: LAB
+
+# dpgs to provide conectivity for the lab
 dpg_provision_name: dpgProvision
 dpg_external_name: dpgExternal
 
-root_folder_name: VSPHERE-LAB
-lab_network_folder_full_path: "/{{ datacenter_name}}/network/{{ root_folder_name }}"
-lab_vm_folder_name: "LAB{{ lab_padded_id }}"
-lab_vm_folder_full_path: "/{{ datacenter_name}}/vm/{{ root_folder_name }}/{{ lab_vm_folder_name }}"
+# vlans default configurations
+vlans:
+  - vlan_id: 2001
+    gateway_ip: 10.0.0.1
+    mask: 24
+    description: Any Network
 
-drs_affinity_rule: "vsphere-lab{{ lab_padded_id }}-affinity-rule"
+# vyos server
+vyos_server:
+  name: vyos-vm
+  num_cpus: 1
+  memory_gb: 1
+  provision_mac_address: INVALID
+  external_mac_address: INVALID
+  internal_mac_address: INVALID
+  initial_powerstate: powered-on
 
-resource_pool: 
+# esxi servers
+esxi_servers:
+  - name: esxi-vm
+    hostname: esxi-vm
+    ip: 10.0.0.1
+    netmask: 255.255.255.0
+    mac_addresses:
+      - INVALID
+      - INVALID
+    num_cpus: 1
+    memory_gb: 1
+    initial_powerstate: powered-off
+
+# infra servers
+infra_servers:
+  - name: infra-vm
+    hostname: infra-vm
+    ip: 10.0.0.1
+    netmask: 255.255.255.0
+    prefix: 24
+    num_cpus: 1
+    memory_gb: 1
+    disk: []
+    initial_powerstate: powered-on
+
+# rdp servers
+rdp_servers:
+  - name: rdp-vm
+    hostname: rdp-vm
+    ip: 10.0.0.1
+    netmask: 255.255.255.0
+    prefix: 24
+    num_cpus: 1
+    memory_gb: 1
+    disk: []
+    initial_powerstate: powered-on
+
+# resource pool configurations
+resource_pool:
   name: "RP-VSPHERELAB{{ lab_padded_id }}"
   memory:
-    reservation: 0
+    reservation: 8192
     limit: 81920
-    shares: normal
-    expandable: true
+    shares: low
+    expandable: false
   cpu:
-    reservation: 0
-    limit: 20480
-    shares: normal
-    expandable: true
+    reservation: 2000
+    limit: 20000
+    shares: low
+    expandable: false
 
+# templates used
 templates:
   infra_linux: Template-ol8rhk-lab
   vyos_vm: Template-vyos-13

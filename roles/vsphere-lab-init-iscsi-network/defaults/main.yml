@@ -1,6 +1,13 @@
 ---
 # defaults file for roles/vsphere-lab-init-iscsi-network
-network_services:
-  - NetworkManager
-
 network_vlan_interface: ens192
+
+global_mtu: 9000
+
+management_network_gateway: 127.0.0.1
+
+iscsi_server_ip: 127.0.0.1
+iscsi_server_prefix: 24
+iscsi_server_service_vlan: 1001
+iscsi_server_service_ip: 127.0.0.1
+iscsi_server_service_prefix: 24
