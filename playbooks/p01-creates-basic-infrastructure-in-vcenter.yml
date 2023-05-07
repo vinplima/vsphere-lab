@@ -13,9 +13,6 @@
   connection: local
   gather_facts: true
 
-  # collections:
-  #   - community.vmware
-
   pre_tasks:
     - name: Include credentials
       ansible.builtin.include_vars:

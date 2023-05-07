@@ -1,2 +1,13 @@
 ---
 # vars file for roles/vsphere-lab-destroy
+
+vds_dpg_name: "dpgVsphereLab{{ lab_padded_id }}"
+vds_name: "vdsVsphereLab{{ lab_padded_id }}"
+
+root_folder_name: VSPHERE-LAB
+lab_network_folder_full_path: "/{{ datacenter_name }}/network/{{ root_folder_name }}"
+lab_vm_folder_name: "LAB{{ lab_padded_id }}"
+lab_vm_folder_full_path: "/{{ datacenter_name }}/vm/{{ root_folder_name }}/{{ lab_vm_folder_name }}"
+
+drs_affinity_rule: "vsphere-lab{{ lab_padded_id }}-affinity-rule"
+resource_pool_name: "RP-VSPHERELAB{{ lab_padded_id }}"

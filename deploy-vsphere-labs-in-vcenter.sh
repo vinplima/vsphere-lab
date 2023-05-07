@@ -9,7 +9,7 @@
 sleep_seconds=1800 # sleeps for 30 minutes between deployments
 
 base_dir="$(dirname $0)"
-playbook_file="deploy-vsphere-lab.yml"
+playbook_file="deploy-vsphere-lab-in-vcenter.yml"
 inventories_dir="inventories"
 
 cd "$base_dir" || exit

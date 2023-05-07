@@ -1,8 +1,8 @@
 ---
 #
-# Configure remote desktop server
+# Configures remote desktop server
 #
-- name: Configure remote desktop
+- name: Configures remote desktop
   hosts: remotedesktop
   gather_facts: true
 

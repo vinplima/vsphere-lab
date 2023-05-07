@@ -76,11 +76,11 @@
     arguments: /s /v "/qn EULAS_AGREED=1 AUTOSOFTWAREUPDATE=0 DATACOLLECTION=0"
 
 #
-# Download files to 
+# Download files to assist in labs activitie
 #
-- name: Copy files for laboratory activities
+- name: Download files for laboratory activities
   ansible.windows.win_get_url:
-    src: "{{ item }}"
+    url: "{{ item }}"
     dest: "{{ tmp_directory }}"
   loop:
     - "{{ ovf_template_windows_zip_url }}"

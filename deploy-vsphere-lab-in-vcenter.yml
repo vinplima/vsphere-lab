@@ -1,0 +1,16 @@
+---
+
+- name: Part 1 - Creates basic infrastructure in vCenter
+  ansible.builtin.import_playbook: playbooks/p01-creates-basic-infrastructure-in-vcenter.yml
+
+- name: Part 2 - Configures VyOS router
+  ansible.builtin.import_playbook: playbooks/p02-configures-vyos-router.yml
+
+- name: Part 3 - Configures infra servers
+  ansible.builtin.import_playbook: playbooks/p03-configures-infra-servers.yml
+
+- name: Part 4 - Deploys vSphere infra
+  ansible.builtin.import_playbook: playbooks/p04-deploys-vsphere-infra.yml
+
+- name: Part 5 - Configures remote desktop
+  ansible.builtin.import_playbook: playbooks/p05-configures-remote-desktop.yml

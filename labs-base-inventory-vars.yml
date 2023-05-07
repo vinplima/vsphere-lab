@@ -11,7 +11,7 @@ lab_ips:
 external_cidr: 
 external_gateway: 
 
-# comma separated ntp and dns servers list, and route networks in ip/mask format
+# ntp and dns servers list, and route networks in ip/mask format list
 ntp_servers_list: 
 dns_servers_list: 
 route_networks: 
@@ -20,25 +20,20 @@ route_networks:
 ansible_python_interpreter:
 
 #
-# files that need to be available in the ansible host for deployment
+# VMware files available in a HTTP repository for download
 #
 
-# esxi 7 iso path
-esxi_iso_path:
+# esxi 7 iso url
+esxi_iso_url:
 
-# VCSA 7 iso path
-vcsa_iso_path: 
+# VCSA 7 iso url
+vcsa_iso_url: 
 
-# OVFTool bundle path
-ovftool_bundle_path:
+# OVFTool bundle url
+ovftool_bundle_url:
 
-# Remote Console zip path
-vmware_remote_console_zip_path:
-
-# OVF zips and ISO files
-ovf_template_windows_zip_path: 
-ovf_template_linux_zip_path: 
-iso_so_linux_path: 
+# Remote Console zip url
+vmware_remote_console_zip_url:
 
 #
 # vcenter server variables (enviroment to be used)
@@ -57,6 +52,11 @@ dpg_external_name:
 #
 # optional itens
 #
+
+# OVF zips and ISO files - to be downloaded into the remote desktop server
+# ovf_template_windows_zip_url: 
+# ovf_template_linux_zip_url: 
+# iso_so_linux_url: 
 
 # URL to download syslinux (used in dnsmasq role)
 #dnsmasq_syslinux_url:

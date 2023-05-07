@@ -1,2 +1,82 @@
 ---
 # defaults file for roles/vsphere-lab-create-inventories
+
+lab_count: 0 
+lab_ips: []
+
+lab_id: 1
+lab_padded_id: '01'
+inventories_path: "./inventories"
+
+external_ip: 127.0.0.1
+external_cidr: 32
+external_gateway: 127.0.0.1
+
+route_networks: ['0.0.0.0/0']
+
+ntp_servers_list: []
+dns_servers_list: []
+
+network_vlan_interface: ens192
+
+infra_servers:
+
+  - hostname: dnsmasq01
+    nat_rules:
+      - external_port: 11022
+        internal_port: 22
+
+  - hostname: nfsserver01
+    nat_rules:
+      - external_port: 12022
+        internal_port: 22
+  
+  - hostname: iscsi01
+    nat_rules:
+      - external_port: 13022
+        internal_port: 22
+
+rdp_servers:
+  - hostname: rdp01
+    nat_rules:
+      - external_port: 14022
+        internal_port: 22
+
+esxi_iso_url: http://127.0.0.1/esxi.iso
+
+dnsmasq_syslinux_url: null
+
+windows_shell_type: cmd
+windows_administrator: administrator
+default_lab_password: VMware1!
+
+vmware_remote_console_zip_url: http://127.0.0.1/rc.zip
+
+firefox_download_url: null
+putty_download_url: null
+
+ovf_template_windows_zip_url: null
+ovf_template_linux_zip_url: null
+iso_so_linux_url: null
+
+linux_root: root
+
+ol8_baseos_latest_repo_url: null
+ol8_appstream_repo_url: null
+
+ovftool_bundle_url: http://127.0.0.1/ovftool.bundle
+vcsa_iso_url: http://127.0.0.1/vcsa.iso
+
+datacenter_name: LAB
+vcenter_hostname: vcenter.local
+cluster_name: LAB
+datastore_name: datastore
+dpg_provision_name: dpgProvision
+dpg_external_name: dpgExternal
+
+vyos_connection: network_cli
+vyos_network_os: vyos
+vyos_user: vyos
+vyos_password: laboratory
+
+vyos_provision_ip: null

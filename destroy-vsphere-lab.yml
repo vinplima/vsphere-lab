@@ -1,20 +1,19 @@
 ---
 #
-# 
+# Cleans all vSphere Lab infra
 #
 - name: Clean lab infra in vCenter
   hosts: vcenter
   connection: local
   gather_facts: true
 
-  collections:
-    - community.vmware
-
   pre_tasks:
-    - include_vars:
+
+    - name: Include credentials
+      ansible.builtin.include_vars:
         dir: credentials
-        ignore_files: 
-          - README.md
+        extensions: ['yml', 'yaml']
+        ignore_unknown_extensions: true
 
   roles:
     - roles/vsphere-lab-destroy

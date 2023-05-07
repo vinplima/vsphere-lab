@@ -4,7 +4,7 @@
 # lab variables
 lab_domain: vsphere.lab
 
-lab_id: "{{ present_lab_id|default(1) }}"
+lab_id: "{{ present_lab_id }}"
 lab_padded_id: "{{ '%02d'|format(lab_id|int) }}"
 
 esxi_mac_seed: "00:50:56:3E:{{ lab_padded_id }}:"

@@ -1,7 +1,7 @@
 ---
 #
 # Creates all labs inventory files
-# 
+#
 
 - name: Create labs inventory files
   hosts: localhost
@@ -10,20 +10,20 @@
   pre_tasks:
 
     - name: Validate IP ammount
-      fail:
+      ansible.builtin.fail:
         msg: >-
           The ammount of IPs have to be equal or greater to the ammount of labs to be created
-      when: (lab_ips | length) < lab_count 
+      when: (lab_ips | length) < lab_count
 
   tasks:
 
     - name: Create labs inventory files
-      include_role: 
+      ansible.builtin.include_role:
         name: roles/vsphere-lab-create-inventories
       loop: "{{ range(0, lab_count) | list }}"
       loop_control:
         loop_var: lab_index
       vars:
-        present_lab_id: "{{ lab_index + 1}}"
+        present_lab_id: "{{ lab_index + 1 }}"
         inventories_path: "./inventories/"
         external_ip: "{{ lab_ips[lab_index] }}"

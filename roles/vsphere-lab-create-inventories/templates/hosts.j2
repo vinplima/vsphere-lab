@@ -2,21 +2,31 @@
 # Lab {{ lab_id }} inventory file
 #
 
+{% if ansible_python_interpreter %}
 localhost ansible_python_interpreter={{ ansible_python_interpreter }}
+{% endif %}
 
-{% for item in infra_servers %}
-{{ item.hostname }} ansible_host={{ external_ip }} ansible_port={{ item.external_port }}
+{% for server in infra_servers %}
+{% for nat_rule in server.nat_rules %}
+{% if nat_rule.internal_port == 22 %}
+{{ server.hostname }} ansible_host={{ external_ip }} ansible_port={{ nat_rule.external_port }}
+{% endif %}
+{% endfor %}
 {% endfor %}
 
-{% for item in rdp_servers %}
-{{ item.hostname }} ansible_host={{ external_ip }} ansible_port={{ item.external_port }}
+{% for server in rdp_servers %}
+{% for nat_rule in server.nat_rules %}
+{% if nat_rule.internal_port == 22 %}
+{{ server.hostname }} ansible_host={{ external_ip }} ansible_port={{ nat_rule.external_port }}
+{% endif %}
+{% endfor %}
 {% endfor %}
 
 [dnsmasq]
 {{ infra_servers.0.hostname }}
 
 [dnsmasq:vars]
-esxi_iso_path={{ esxi_iso_path }}
+esxi_iso_url={{ esxi_iso_url }}
 {% if dnsmasq_syslinux_url %}
 dnsmasq_syslinux_url={{ dnsmasq_syslinux_url }}
 {% endif %}
@@ -35,16 +45,22 @@ ansible_shell_type={{ windows_shell_type }}
 shell_type={{ windows_shell_type }}
 ansible_user={{ windows_administrator }}
 ansible_password={{ default_lab_password }}
-vmware_remote_console_zip_path={{ vmware_remote_console_zip_path }}
-{% if firefox_download_url is defined %}
+vmware_remote_console_zip_url={{ vmware_remote_console_zip_url }}
+{% if firefox_download_url %}
 firefox_download_url={{ firefox_download_url }}
 {% endif %}
-{% if putty_download_url is defined %}
+{% if putty_download_url %}
 putty_download_url={{ putty_download_url }}
 {% endif %}
-ovf_template_windows_zip_path={{ ovf_template_windows_zip_path }}
-ovf_template_linux_zip_path={{ ovf_template_linux_zip_path }}
-iso_so_linux_path={{ iso_so_linux_path }}
+{% if ovf_template_windows_zip_url %}
+ovf_template_windows_zip_url={{ ovf_template_windows_zip_url }}
+{% endif %}
+{% if ovf_template_linux_zip_url %}
+ovf_template_linux_zip_url={{ ovf_template_linux_zip_url }}
+{% endif %}
+{% if iso_so_linux_url %}
+iso_so_linux_url={{ iso_so_linux_url }}
+{% endif %}
 
 [infraserver:children]
 dnsmasq
@@ -54,10 +70,10 @@ iscsi
 [infraserver:vars]
 ansible_ssh_user={{ linux_root }}
 ansible_ssh_pass={{ default_lab_password }}
-{% if ol8_baseos_latest_repo_url is defined %}
+{% if ol8_baseos_latest_repo_url %}
 ol8_baseos_latest_repo_url={{ ol8_baseos_latest_repo_url }}
 {% endif %}
-{% if ol8_appstream_repo_url is defined %}
+{% if ol8_appstream_repo_url %}
 ol8_appstream_repo_url={{ ol8_appstream_repo_url }}
 {% endif %}
 
@@ -69,8 +85,8 @@ iscsi
 dnsmasq
 
 [deployvcenter:vars]
-ovftool_bundle_path={{ ovftool_bundle_path }}
-vcsa_iso_path={{ vcsa_iso_path }}
+ovftool_bundle_url={{ ovftool_bundle_url }}
+vcsa_iso_url={{ vcsa_iso_url }}
 
 [vcenter]
 localhost
@@ -100,6 +116,6 @@ external_gateway={{ external_gateway }}
 route_networks={{ route_networks }}
 ntp_servers_list={{ ntp_servers_list }}
 dns_servers_list={{ dns_servers_list }}
-network_vlan_interface={{ network_vlan_interface | default('ens192') }}
+network_vlan_interface={{ network_vlan_interface }}
 # set vyos provision ip to accelerate provisioning in case of failure
 #vyos_provision_ip=

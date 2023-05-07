@@ -24,13 +24,12 @@
     password: '{{ vcenter_credentials.password }}'
     validate_certs: "{{ validate_certs }}"
     name: "{{ item }}"
-    delete_from_inventory: False
-    force: True
+    delete_from_inventory: false
+    force: true
     state: absent
   delegate_to: localhost
-  with_items: "{{ vm_info.virtual_machines | map(attribute='guest_name') | list }}"
+  loop: "{{ vm_info.virtual_machines | map(attribute='guest_name') | list }}"
   ignore_errors: true
-
 
 # delete vm folder
 - name: Remove present lab VM folder
@@ -40,7 +39,7 @@
     password: '{{ vcenter_credentials.password }}'
     validate_certs: "{{ validate_certs }}"
     datacenter_name: "{{ datacenter_name }}"
-    parent_folder: "{{ root_folder_name }}" 
+    parent_folder: "{{ root_folder_name }}"
     folder_name: "{{ lab_vm_folder_name }}"
     folder_type: vm
     state: absent
@@ -95,7 +94,7 @@
 #
 
 # remove vds from hosts
-- name: Gather cluster {{ cluster_name }} info
+- name: Gather cluster info - {{ cluster_name }}
   community.vmware.vmware_cluster_info:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_credentials.username }}"
@@ -105,7 +104,7 @@
   delegate_to: localhost
   register: cluster_info
 
-- name: Remove each cluster {{ cluster_name }} host from vDS {{ vds_name }} with no uplinks
+- name: Remove each cluster host from vDS with no uplinks - {{ vds_name }}
   community.vmware.vmware_dvs_host:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_credentials.username }}"
