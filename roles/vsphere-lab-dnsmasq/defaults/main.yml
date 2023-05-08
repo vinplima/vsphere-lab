@@ -42,3 +42,6 @@ iscsi_server:
 
 # management network gateway
 management_network_gateway: 127.0.0.1
+
+# allow legacy CPU
+allow_legacy_cpu: false
