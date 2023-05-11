@@ -12,6 +12,7 @@
       ansible.builtin.add_host:
         name: "{{ vyos_provision_ip }}"
         groups: vyos
+      tags: vyos
 
 #
 # Configures vyos router
@@ -24,5 +25,9 @@
   hosts: vyos
   gather_facts: false
 
-  roles:
-    - ../roles/vsphere-lab-vyos
+  tasks:
+
+    - name: Include VyOS role
+      ansible.builtin.include_role:
+        name: ../roles/vsphere-lab-vyos
+      tags: vyos

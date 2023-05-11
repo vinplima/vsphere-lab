@@ -158,13 +158,7 @@
     cluster: "{{ cluster_name }}"
     resource_pool: "{{ resource_pool.name }}"
     datastore: "{{ datastore_name }}"
-    disk:
-      - size_gb: 20
-        type: thin
-      - size_gb: 100
-        type: thin
-      - size_gb: 100
-        type: thin
+    disk: "{{ esxi_disks }}"
     hardware:
       num_cpus: "{{ item.num_cpus }}"
       memory_mb: "{{ item.memory_gb * 1024 }}"

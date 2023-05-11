@@ -32,7 +32,7 @@ vlans:
   - vlan_id: 2003
     gateway_ip: 172.16.203.1
     mask: 24
-    description: vSAN Network
+    description: iSCSI Network
   - vlan_id: 2004
     gateway_ip: 172.16.204.1
     mask: 24
@@ -82,9 +82,9 @@ vyos_server:
   name: "vsphere-lab{{ lab_padded_id }}-vyos"
   num_cpus: 2
   memory_gb: 1
-  provision_mac_address: "{{ esxi_mac_seed }}B1"
-  external_mac_address: "{{ esxi_mac_seed }}B2"
-  internal_mac_address: "{{ esxi_mac_seed }}B3"
+  provision_mac_address: "{{ esxi_mac_seed }}F1"
+  external_mac_address: "{{ esxi_mac_seed }}F2"
+  internal_mac_address: "{{ esxi_mac_seed }}F3"
   initial_powerstate: powered-on
 
 vcenter_server:

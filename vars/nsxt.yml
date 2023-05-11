@@ -1,0 +1,196 @@
+---
+
+esxi_servers:
+
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi01"
+    hostname: esxi01
+    ip: 172.16.100.101
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}01"
+      - "{{ esxi_mac_seed }}A1"
+      - "{{ esxi_mac_seed }}B1"
+      - "{{ esxi_mac_seed }}C1"
+    num_cpus: 4
+    memory_gb: 32 
+    initial_powerstate: powered-off
+    nat_rules:
+      - external_port: 21022
+        internal_port: 22
+        description: SSH to esxi01 server
+      - external_port: 11443
+        internal_port: 443
+        description: HTTPS to esxi01 server
+
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi02"
+    hostname: esxi02
+    ip: 172.16.100.102
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}02"
+      - "{{ esxi_mac_seed }}A2"
+      - "{{ esxi_mac_seed }}B2"
+      - "{{ esxi_mac_seed }}C2"
+    num_cpus: 4
+    memory_gb: 32 
+    initial_powerstate: powered-off
+    nat_rules:
+      - external_port: 22022
+        internal_port: 22
+        description: SSH to esxi02 server
+      - external_port: 12443
+        internal_port: 443
+        description: HTTPS to esxi02 server
+
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi03"
+    hostname: esxi03
+    ip: 172.16.100.103
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}03"
+      - "{{ esxi_mac_seed }}A3"
+      - "{{ esxi_mac_seed }}B3"
+      - "{{ esxi_mac_seed }}C3"
+    num_cpus: 4
+    memory_gb: 32 
+    initial_powerstate: powered-off
+    nat_rules:
+      - external_port: 23022
+        internal_port: 22
+        description: SSH to esxi03 server
+      - external_port: 13443
+        internal_port: 443
+        description: HTTPS to esxi03 server
+
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi04"
+    hostname: esxi04
+    ip: 172.16.100.104
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}04"
+      - "{{ esxi_mac_seed }}A4"
+      - "{{ esxi_mac_seed }}B4"
+      - "{{ esxi_mac_seed }}C4"
+    num_cpus: 4
+    memory_gb: 32 
+    initial_powerstate: powered-off
+    nat_rules:
+      - external_port: 24022
+        internal_port: 22
+        description: SSH to esxi04 server
+      - external_port: 14443
+        internal_port: 443
+        description: HTTPS to esxi04 server
+
+  - name: "vsphere-lab{{ lab_padded_id }}-esxi05"
+    hostname: esxi05
+    ip: 172.16.100.105
+    netmask: 255.255.255.0
+    mac_addresses: 
+      - "{{ esxi_mac_seed }}05"
+      - "{{ esxi_mac_seed }}A5"
+      - "{{ esxi_mac_seed }}B5"
+      - "{{ esxi_mac_seed }}C5"
+    num_cpus: 4
+    memory_gb: 32 
+    initial_powerstate: powered-off
+    nat_rules:
+      - external_port: 25022
+        internal_port: 22
+        description: SSH to esxi05 server
+      - external_port: 15443
+        internal_port: 443
+        description: HTTPS to esxi05 server
+
+resource_pool:
+  name: "RP-VSPHERELAB{{ lab_padded_id }}"
+  memory:
+    reservation: 30720
+    limit: 131072
+    shares: low
+    expandable: false
+  cpu:
+    reservation: 3000
+    limit: 30000
+    shares: low
+    expandable: false
+
+extra_dns_registers:
+  - hostname: nsxt
+    ip: 172.16.100.40
+  - hostname: edge01
+    ip: 172.16.100.41
+  - hostname: edge02
+    ip: 172.16.100.42
+  - hostname: edge03
+    ip: 172.16.100.43
+  - hostname: edge04
+    ip: 172.16.100.44
+
+extra_destination_nat_rules:
+  - ip: 172.16.100.40
+    external_port: 8443
+    internal_port: 443
+    description: NSX-T Appliance HTTPS Access
+  - ip: 172.16.100.40
+    external_port: 41022
+    internal_port: 22
+    description: NSX-T Appliance SSH Access
+  - ip: 172.16.100.41
+    external_port: 42022
+    internal_port: 22
+    description: EDGE01 Appliance SSH Access
+  - ip: 172.16.100.42
+    external_port: 43022
+    internal_port: 22
+    description: EDGE02 Appliance SSH Access
+  - ip: 172.16.100.43
+    external_port: 44022
+    internal_port: 22
+    description: EDGE03 Appliance SSH Access
+  - ip: 172.16.100.44
+    external_port: 45022
+    internal_port: 22
+    description: EDGE04 Appliance SSH Access
+
+vlans:
+  - vlan_id: 2001
+    gateway_ip: 172.16.201.1
+    mask: 24
+    description: vMotion Network
+  - vlan_id: 2002
+    gateway_ip: 172.16.202.1
+    mask: 24
+    description: NFS Storage Network
+  - vlan_id: 2003
+    gateway_ip: 172.16.203.1
+    mask: 24
+    description: iSCSI Network
+  - vlan_id: 2004
+    gateway_ip: 172.16.204.1
+    mask: 24
+    description: VLAN Available
+  - vlan_id: 2005
+    gateway_ip: 172.16.205.1
+    mask: 24
+    description: VLAN for Transport Node TEP Network
+  - vlan_id: 2006
+    gateway_ip: 172.16.206.1
+    mask: 24
+    description: VLAN for Edge Node TEP Network
+  - vlan_id: 2007
+    gateway_ip: 172.16.207.1
+    mask: 24
+    description: VLAN for Edge Node Uplink Left
+  - vlan_id: 2008
+    gateway_ip: 172.16.208.1
+    mask: 24
+    description: VLAN for Edge Node Uplink Right
+  - vlan_id: 2009
+    gateway_ip: 172.16.209.1
+    mask: 24
+    description: VLAN for Application
+  - vlan_id: 2010
+    gateway_ip: 172.16.210.1
+    mask: 24
+    description: VLAN for Database

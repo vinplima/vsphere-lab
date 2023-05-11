@@ -13,6 +13,10 @@
 {{ item.ip }}  {{ item.hostname }}
 {% endfor %}
 
+{% for item in extra_dns_registers %}
+{{ item.ip }}  {{ item.hostname }}
+{% endfor %}
+
 {{ vcenter_server.ip }} {{ vcenter_server.hostname }}
 
 {{ nfs_server.ip }} {{ nfs_server.name }}
