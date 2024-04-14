@@ -161,6 +161,7 @@
     disk: "{{ esxi_disks }}"
     hardware:
       num_cpus: "{{ item.num_cpus }}"
+      num_cpu_cores_per_socket: "{{ item.num_cpus }}" # one license per ESXi
       memory_mb: "{{ item.memory_gb * 1024 }}"
   delegate_to: localhost
   with_items: "{{ esxi_servers }}"
