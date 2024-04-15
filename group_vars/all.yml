@@ -13,6 +13,7 @@ esxi_mac_seed: "00:50:56:3E:{{ lab_padded_id }}:"
 default_lab_password: VMware1!
 
 # network variables
+lab_subnet: 172.16.0.0/16
 management_network_gateway: 172.16.100.1
 global_mtu: 9000
 

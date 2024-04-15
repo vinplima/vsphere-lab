@@ -2,3 +2,6 @@
 # defaults file for roles/vsphere-lab-infrabootstrap
 ol8_baseos_latest_repo_url: 'https://yum$ociregion.$ocidomain/repo/OracleLinux/OL8/baseos/latest/$basearch/'
 ol8_appstream_repo_url: 'https://yum$ociregion.$ocidomain/repo/OracleLinux/OL8/appstream/$basearch/'
+
+ntp_allow_network: '172.16.0.0/16'
+ntp_is_ntp_server: false

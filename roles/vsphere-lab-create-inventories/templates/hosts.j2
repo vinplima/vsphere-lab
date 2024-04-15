@@ -27,6 +27,8 @@ localhost ansible_python_interpreter={{ ansible_python_interpreter }}
 
 [dnsmasq:vars]
 esxi_iso_url={{ esxi_iso_url }}
+ntp_allow_network={{ lab_subnet }}
+ntp_is_ntp_server=true
 {% if dnsmasq_syslinux_url %}
 dnsmasq_syslinux_url={{ dnsmasq_syslinux_url }}
 {% endif %}
