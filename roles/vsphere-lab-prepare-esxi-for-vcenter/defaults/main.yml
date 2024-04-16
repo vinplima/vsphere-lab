@@ -2,7 +2,7 @@
 # defaults file for roles/vsphere-lab-prepare-esxi-for-vcenter
 validate_certs: false
 
-global_mtu: 9000
+# global_mtu: 9000
 external_ip: 127.0.0.1
 lab_domain: vsphere.lab
 default_lab_password: VMware1!
@@ -10,4 +10,4 @@ default_lab_password: VMware1!
 esxi_hostname: esxi01
 esxi_https_port: 11443
 
-pg_management_name: pgManagement
+# pg_management_name: pgManagement

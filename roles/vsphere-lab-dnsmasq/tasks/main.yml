@@ -92,6 +92,7 @@
     dest: /etc/hosts
     mode: 0644
   notify: restart dnsmasq
+  tags: dns-registers
 
 # nfs configuration
 - name: Configure nfs export

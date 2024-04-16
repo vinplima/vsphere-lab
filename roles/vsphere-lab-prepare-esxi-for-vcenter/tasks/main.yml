@@ -28,26 +28,26 @@
   with_items: "{{ host_vmhbas.hosts_disk_info[esxi_fqdn] }}"
   when: item.canonical_name == disk_canonical_name
 
-- name: Add a VMware vSwitch
-  community.vmware.vmware_vswitch:
-    hostname: "{{ external_ip }}"
-    port: "{{ esxi_https_port }}"
-    username: "{{ esxi_root }}"
-    password: "{{ default_lab_password }}"
-    validate_certs: "{{ validate_certs }}"
-    switch: "{{ virtual_switch_name }}"
-    nics: "{{ virtual_switch_nic }}"
-    mtu: "{{ global_mtu }}"
-  delegate_to: localhost
+# - name: Add a VMware vSwitch
+#   community.vmware.vmware_vswitch:
+#     hostname: "{{ external_ip }}"
+#     port: "{{ esxi_https_port }}"
+#     username: "{{ esxi_root }}"
+#     password: "{{ default_lab_password }}"
+#     validate_certs: "{{ validate_certs }}"
+#     switch: "{{ virtual_switch_name }}"
+#     nics: "{{ virtual_switch_nic }}"
+#     mtu: "{{ global_mtu }}"
+#   delegate_to: localhost
 
-- name: Add Management Network VM Portgroup
-  community.vmware.vmware_portgroup:
-    hostname: "{{ external_ip }}"
-    port: "{{ esxi_https_port }}"
-    username: "{{ esxi_root }}"
-    password: "{{ default_lab_password }}"
-    validate_certs: "{{ validate_certs }}"
-    esxi_hostname: "{{ esxi_fqdn }}"
-    switch: "{{ virtual_switch_name }}"
-    portgroup: "{{ pg_management_name }}"
-  delegate_to: localhost
+# - name: Add Management Network VM Portgroup
+#   community.vmware.vmware_portgroup:
+#     hostname: "{{ external_ip }}"
+#     port: "{{ esxi_https_port }}"
+#     username: "{{ esxi_root }}"
+#     password: "{{ default_lab_password }}"
+#     validate_certs: "{{ validate_certs }}"
+#     esxi_hostname: "{{ esxi_fqdn }}"
+#     switch: "{{ virtual_switch_name }}"
+#     portgroup: "{{ pg_management_name }}"
+#   delegate_to: localhost

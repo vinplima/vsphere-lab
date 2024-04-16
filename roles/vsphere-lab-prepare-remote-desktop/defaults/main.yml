@@ -4,7 +4,7 @@ lab_padded_id: '01'
 win_user_password: VMware1!
 
 firefox_download_url: https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US
-putty_download_url: https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.78-installer.msi
+putty_download_url: https://the.earth.li/~sgtatham/putty/0.76/w64/putty-64bit-0.76-installer.msi
 
 tmp_directory: C:\Temp
 

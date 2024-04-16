@@ -5,7 +5,7 @@ esxi_fqdn: "{{ esxi_hostname }}.{{ lab_domain }}"
 datastore_type: vmfs
 vmfs_version: 6
 disk_canonical_name: "mpx.vmhba0:C0:T1:L0"
-virtual_switch_name: vSwitch1
-virtual_switch_nic: vmnic1
+# virtual_switch_name: vSwitch1
+# virtual_switch_nic: vmnic1
 
 datastore_name: "local_{{ esxi_hostname }}"

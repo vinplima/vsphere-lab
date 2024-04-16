@@ -14,9 +14,11 @@
         dir: ../credentials
         extensions: ['yml', 'yaml']
         ignore_unknown_extensions: true
+      tags: [kickstart-esxi]
 
   roles:
-    - ../roles/vsphere-lab-kickstart-esxi
+    - role: ../roles/vsphere-lab-kickstart-esxi
+      tags: [kickstart-esxi]
 
 #
 # Configure ESXi for vCenter deployment
@@ -34,9 +36,11 @@
         esxi_https_port: "{{ item.external_port }}"
       loop: "{{ esxi_servers.0.nat_rules }}"
       when: item.internal_port == 443
+      tags: [prepare-esxi]
 
   roles:
-    - ../roles/vsphere-lab-prepare-esxi-for-vcenter
+    - role: ../roles/vsphere-lab-prepare-esxi-for-vcenter
+      tags: [prepare-esxi]
 
 #
 # Installs vCenter Server
@@ -51,7 +55,9 @@
       ansible.builtin.set_fact:
         esxi_hostname: "{{ esxi_servers.0.hostname }}"
         lab_dns_servers: "{{ [infra_servers.0.ip] }}"
-        lab_ntp_servers: "{{ ntp_servers }}"
+        lab_ntp_servers: "{{ [infra_servers.0.ip] }}"
+      tags: [deploy-vcenter]
 
   roles:
-    - ../roles/vsphere-lab-deploy-vcenter
+    - role: ../roles/vsphere-lab-deploy-vcenter
+      tags: [deploy-vcenter]

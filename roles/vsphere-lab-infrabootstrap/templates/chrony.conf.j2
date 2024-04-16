@@ -7,3 +7,7 @@ rtcsync
 keyfile /etc/chrony.keys
 leapsectz right/UTC
 logdir /var/log/chrony
+{% if ntp_is_ntp_server %}
+allow {{ ntp_allow_network }}
+local stratum 10
+{% endif %}

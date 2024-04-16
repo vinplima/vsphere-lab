@@ -71,6 +71,7 @@
     state: "{{ item.initial_powerstate }}"
   delegate_to: localhost
   with_items: "{{ [vyos_server] + esxi_servers + infra_servers + rdp_servers }}"
+  tags: ensure-initial-powerstate
 
 - name: Sleeps while VMs are starting
   ansible.builtin.wait_for:

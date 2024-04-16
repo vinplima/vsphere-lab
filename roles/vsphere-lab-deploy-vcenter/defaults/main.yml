@@ -15,7 +15,7 @@ lab_dns_servers: []
 lab_ntp_servers: []
 
 esxi_hostname: esxi01
-pg_management_name: pgManagement
+pg_management_name: VM Network
 management_network_gateway: 127.0.0.1
 
 lab_domain: vsphere.lab

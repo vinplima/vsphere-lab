@@ -31,6 +31,21 @@
         address: "{{ vcenter_server.ip }}"
         port: "{{ item.internal_port }}"
 
+- name: Configures NAT Destination rules for extra cases
+  ansible.builtin.set_fact:
+    vyos_nat_destination_rules: "{{ vyos_nat_destination_rules + [nat_rule] }}"
+  loop: "{{ extra_destination_nat_rules }}"
+  vars:
+    nat_rule:
+      description: "{{ item.description }}"
+      destination:
+        port: "{{ item.external_port }}"
+      inbound_interface: eth1
+      protocol: tcp
+      translation:
+        address: "{{ item.ip }}"
+        port: "{{ item.internal_port }}"
+
 - name: Wait for vyos to become reachable
   ansible.builtin.wait_for_connection:
 

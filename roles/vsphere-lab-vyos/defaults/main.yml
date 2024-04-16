@@ -34,3 +34,7 @@ esxi_servers:
       - external_port: 11443
         internal_port: 443
         description: HTTPS for server ESXi
+
+vyos_dhcp_networks: []
+vyos_nat_destination_rules: []
+extra_destination_nat_rules: []

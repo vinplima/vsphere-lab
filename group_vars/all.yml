@@ -13,6 +13,7 @@ esxi_mac_seed: "00:50:56:3E:{{ lab_padded_id }}:"
 default_lab_password: VMware1!
 
 # network variables
+lab_subnet: 172.16.0.0/16
 management_network_gateway: 172.16.100.1
 global_mtu: 9000
 
@@ -32,7 +33,7 @@ vlans:
   - vlan_id: 2003
     gateway_ip: 172.16.203.1
     mask: 24
-    description: vSAN Network
+    description: iSCSI Network
   - vlan_id: 2004
     gateway_ip: 172.16.204.1
     mask: 24
@@ -82,9 +83,9 @@ vyos_server:
   name: "vsphere-lab{{ lab_padded_id }}-vyos"
   num_cpus: 2
   memory_gb: 1
-  provision_mac_address: "{{ esxi_mac_seed }}B1"
-  external_mac_address: "{{ esxi_mac_seed }}B2"
-  internal_mac_address: "{{ esxi_mac_seed }}B3"
+  provision_mac_address: "{{ esxi_mac_seed }}F1"
+  external_mac_address: "{{ esxi_mac_seed }}F2"
+  internal_mac_address: "{{ esxi_mac_seed }}F3"
   initial_powerstate: powered-on
 
 vcenter_server:
@@ -302,7 +303,7 @@ iscsi_vols:
 # ESXi variables
 #
 # name of the local port group used for vCenter deployment
-pg_management_name: pgManagement
+# pg_management_name: pgManagement
 
 # esxi root user
 esxi_root: root

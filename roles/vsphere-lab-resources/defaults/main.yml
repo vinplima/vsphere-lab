@@ -98,3 +98,12 @@ templates:
   vyos_vm: Template-vyos-13
   nested_esxi: Template-nestedesxi-7
   windows: Template-winserver19std
+
+# disks to be created in each ESXi
+esxi_disks:
+  - size_gb: 20
+    type: thin
+  - size_gb: 100
+    type: thin
+  - size_gb: 100
+    type: thin
