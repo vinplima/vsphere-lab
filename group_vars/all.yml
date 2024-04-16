@@ -303,7 +303,7 @@ iscsi_vols:
 # ESXi variables
 #
 # name of the local port group used for vCenter deployment
-pg_management_name: pgManagement
+# pg_management_name: pgManagement
 
 # esxi root user
 esxi_root: root
