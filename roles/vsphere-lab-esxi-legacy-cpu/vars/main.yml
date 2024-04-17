@@ -1,0 +1,5 @@
+---
+# vars file for roles/vsphere-lab-esxi-legacy-cpu
+
+esxi_boot_cfg_path: /bootbank/boot.cfg
+esxi_boot_kernelopt_string: "autoPartition=FALSE allowLegacyCPU=true"

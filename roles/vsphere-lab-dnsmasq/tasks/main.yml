@@ -40,16 +40,11 @@
     - "{{ dnsmasq_tftp_path }}/boot.cfg"
     - "{{ dnsmasq_tftp_path }}/efi/boot/boot.cfg"
 
-- name: Add legacy CPU support
-  ansible.builtin.set_fact:
-    dnsmasq_ks_kernelopt: "{{ dnsmasq_ks_kernelopt }} allowLegacyCPU=true"
-  when: allow_legacy_cpu
-
 - name: Configure kernelopt to kickstart file
   ansible.builtin.replace:
     path: "{{ item }}"
     regexp: "kernelopt.+"
-    replace: "{{ dnsmasq_ks_kernelopt }}"
+    replace: "kernelopt=ks=nfs://{{ infra_servers.0.ip }}{{ dnsmasq_nfs_path }}/ks.cfg"
     backup: true
   with_items:
     - "{{ dnsmasq_tftp_path }}/boot.cfg"

@@ -264,6 +264,9 @@ esxi_servers:
         internal_port: 443
         description: HTTPS to esxi05 server
 
+# ESXi Server boot configurations
+allow_legacy_cpu: true
+
 # nfs service
 nfs_server:
   ip: 172.16.202.12

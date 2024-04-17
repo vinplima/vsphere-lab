@@ -1,0 +1,4 @@
+---
+# defaults file for roles/vsphere-lab-esxi-legacy-cpu
+
+allow_legacy_cpu: false

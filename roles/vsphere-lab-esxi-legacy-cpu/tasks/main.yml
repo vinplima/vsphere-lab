@@ -1,0 +1,10 @@
+---
+# tasks file for roles/vsphere-lab-esxi-legacy-cpu
+
+- name: Configure kernelopt to allow legacy CPU compatibility
+  ansible.builtin.replace:
+    path: "{{ esxi_boot_cfg_path }}"
+    regexp: "kernelopt.+"
+    replace: "kernelopt={{ esxi_boot_kernelopt_string }}"
+    backup: true
+  when: allow_legacy_cpu

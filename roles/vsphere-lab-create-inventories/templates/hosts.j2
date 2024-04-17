@@ -110,6 +110,13 @@ ansible_network_os={{ vyos_network_os }}
 ansible_ssh_user={{ vyos_user }}
 ansible_ssh_pass={{ vyos_password }}
 
+[esxihosts]
+# dynamically configured
+
+[esxihosts:vars]
+ansible_ssh_user={{ esxi_root }}
+ansible_ssh_pass={{ default_lab_password }}
+
 [all:vars]
 present_lab_id={{ lab_id }}
 external_ip={{ external_ip }}

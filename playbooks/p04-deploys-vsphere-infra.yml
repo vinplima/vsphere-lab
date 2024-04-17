@@ -61,3 +61,33 @@
   roles:
     - role: ../roles/vsphere-lab-deploy-vcenter
       tags: [deploy-vcenter]
+
+#
+# Assemble esxihosts group
+#
+- name: Assemble esxihosts group
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Add ESXi Hosts to inventory group
+      ansible.builtin.add_host:
+        hostname: "{{ item.0.hostname }}"
+        ansible_host: "{{ external_ip }}"
+        ansible_port: "{{ item.1.external_port }}"
+        groups: esxihosts
+      loop: "{{ esxi_servers | subelements('nat_rules') }}"
+      when: item.1.internal_port == 22
+      tags: [allow-legacy-cpu]
+
+#
+# Allow Legacy CPU configuration in ESXi servers
+#
+- name: Allow legacy CPU in ESXi servers
+  hosts: esxihosts
+  gather_facts: true
+
+  roles:
+    - role: ../roles/vsphere-lab-esxi-legacy-cpu
+      tags: [allow-legacy-cpu]
