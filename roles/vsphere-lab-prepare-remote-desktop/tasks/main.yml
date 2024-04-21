@@ -89,6 +89,13 @@
   when: item
 
 #
+# Change Timezone
+#
+- name: Set Timezone
+  community.windows.win_timezone:
+    timezone: "{{ win_timezone }}"
+
+#
 # Reboot Windows
 #
 - name: Reboot windows server

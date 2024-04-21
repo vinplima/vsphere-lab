@@ -13,3 +13,5 @@ vmware_remote_console_zip_url: http://127.0.0.1/rc.zip
 ovf_template_windows_zip_url: null
 ovf_template_linux_zip_url: null
 iso_so_linux_url: null
+
+win_timezone: "E. South America Standard Time"
