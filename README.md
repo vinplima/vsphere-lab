@@ -196,6 +196,7 @@ The code in this project is organized in a group of local roles with the prefix 
 * **vsphere-lab-prepare-remote-desktop**: configures remote desktop server for the laboratory
 * **vsphere-lab-resources**: creates all virtual resources necessary for the laboratory deployment
 * **vsphere-lab-vyos**: configures the VYOS VM with routing and NAT rules
+* **vsphere-lab-esxi-legacy-cpu**: configures ESXi hosts to allow legacy CPU upgrade (use with vSphere Lifecycle Manager)
 
 ### 3.3 Configurations
 
@@ -247,19 +248,19 @@ The **create-labs-inventories.yml** playbook runs locally and its purpose is to 
 
 * **ansible_python_interpreter:** local python path (used in cases where you are using a python virtual environment)
 
-* **esxi_iso_path:** local path to the ESXi 7 ISO file
+* **esxi_iso_url:** url to download the ESXi ISO file
 
-* **vcsa_iso_path:** local path to the VCSA ISO file
+* **vcsa_iso_url:** url to download the VCSA ISO file
 
-* **ovftool_bundle_path:** local path to the ovftool bundle file
+* **ovftool_bundle_url:** url to download the ovftool bundle file
 
-* **vmware_remote_console_zip_path:** local path to the remote console zip file
+* **vmware_remote_console_zip_url:** url to download the remote console zip file
 
-* **ovf_template_windows_zip_path:** local path to Windows Template OVF zip file (downloaded in item 2.5)
+* **ovf_template_windows_zip_url:** url to download Windows Template OVF zip file (downloaded in item 2.5)
 
-* **ovf_template_linux_zip_path:** local path to Linux Template OVF zip file (downloaded in item 2.5)
+* **ovf_template_linux_zip_url:** url to download Linux Template OVF zip file (downloaded in item 2.5)
 
-* **iso_so_linux_path:** local path to Linux ISO file (refer to item 2.6)
+* **iso_so_linux_url:** url to download Linux ISO file (refer to item 2.6)
 
 * **datacenter_name:** data center name to be used in the external vCenter
 
@@ -503,6 +504,7 @@ TO-DO
 Vinicius Porto Lima - viniciusmaximus@gmail.com
 
 Github - https://github.com/vinplima
+LinkedIn - https://www.linkedin.com/in/vinicius-porto-lima/
 
 ---
 
