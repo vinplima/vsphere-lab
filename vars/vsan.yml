@@ -197,6 +197,25 @@ vlans:
     mask: 24
     description: Available VLAN
 
+vyos_dhcp_networks:
+  - network: 172.16.207.0/24
+    name: APP-NETWORK
+    gateway: 172.16.207.1
+    name_server: 172.16.100.11
+    domain_name: "{{ lab_domain }}"
+    range: 
+      start: 172.16.207.100
+      end: 172.16.207.199
+
+  - network: 172.16.208.0/24
+    name: DB-NETWORK
+    gateway: 172.16.208.1
+    name_server: 172.16.100.11
+    domain_name: "{{ lab_domain }}"
+    range: 
+      start: 172.16.208.100
+      end: 172.16.208.199
+
 esxi_disks:
   - size_gb: 20
     type: thin
